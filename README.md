@@ -6,34 +6,13 @@ A collection of demo applications built on the **AI Refinery SDK**, showcasing a
 
 ## Environment Setup (Windows WSL)
 
-### 1. Install system dependencies
-
-```bash
-sudo apt update && sudo apt install -y python3 python3-pip python3-venv git curl
-```
-
-For **marketing-agents-v2** only — install Node.js:
-
-```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-```
-
-### 2. Clone the repo
-
 ```bash
 git clone https://github.com/Haitao-Zhu/air-demo-v2.git
 cd air-demo-v2
+bash setup.sh
 ```
 
-### 3. Create the universal virtual environment
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-```
+This installs Python 3.13, creates the virtual environment, installs all dependencies, and sets up Node.js — everything needed to run any demo.
 
 ---
 
