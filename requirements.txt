@@ -1,0 +1,24 @@
+# ===========================================
+# Universal requirements for all agent demos
+# ===========================================
+
+# --- Core (all demos) ---
+airefinery-sdk
+fastapi
+uvicorn
+python-dotenv
+
+# --- Data processing (cat-service-diagnostic) ---
+pandas
+
+# --- DeepResearchAgent (DeepHumanSelf) ---
+pydantic
+tqdm
+
+# --- MCP integration (marketing-agents-v2) ---
+fastmcp>=2.12.0
+httpx>=0.24.0
+beautifulsoup4>=4.12.0
+mcp>=1.14.0
+mcp-proxy==0.8.2
+arxiv-mcp-server

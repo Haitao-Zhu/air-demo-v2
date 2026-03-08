@@ -1,58 +1,138 @@
 # AI Refinery Demo Collection
 
-All demos share a single Python virtual environment at `../venv/`. Each demo directory has a `venv` symlink pointing to it.
+A collection of demo applications built on the **AI Refinery SDK**, showcasing agentic AI patterns including multi-agent orchestration, conditional routing, human-in-the-loop, RAI guardrails, MCP integration, and more.
 
-## Quick Start
+---
+
+## Environment Setup (Windows WSL)
+
+### 1. Install system dependencies
 
 ```bash
-# Activate the shared venv (from any demo directory)
-source venv/bin/activate
+sudo apt update && sudo apt install -y python3 python3-pip python3-venv git curl
 ```
+
+For **marketing-agents-v2** only — install Node.js:
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+### 2. Clone the repo
+
+```bash
+git clone https://github.com/Haitao-Zhu/air-demo-v2.git
+cd air-demo-v2
+```
+
+### 3. Create the universal virtual environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 4. Configure credentials
+
+Each demo needs an API key. Create a `.env` file in each demo directory you want to run:
+
+```bash
+# Example: set up rai-v2
+cat > rai-v2/.env << 'EOF'
+API_KEY=<your_air_api_key>
+BASE_URL=https://api.airefinery.accenture.com
+EOF
+```
+
+For **salesforce-v2**, also add:
+
+```
+SALESFORCE_CLIENT_KEY=<your_key>
+SALESFORCE_CLIENT_SECRET=<your_secret>
+```
+
+For **DeepHumanSelf**, use environment variables instead:
+
+```bash
+export API_KEY="<your_air_api_key>"
+export AIREFINERY_ADDRESS="https://api.airefinery.accenture.com"
+```
+
+---
 
 ## Demos
 
 | Demo | Type | Interface | Description |
 |------|------|-----------|-------------|
 | **cat-service-diagnostic** | FlowSuperAgent + HumanAgent | CLI / Web UI | Equipment diagnostic with triage routing and technician confirmation |
-| **FlowSuperAgent-v2** | FlowSuperAgent | Web UI | First-match triage routing for support requests |
-| **rai-v2** | RAI Guardrails | Web UI | SearchAgent with 3 responsible AI guardrail rules |
-| **salesforce-v2** | SalesforceAgent | Web UI | Salesforce AgentForce knowledge lookup |
-| **EvaluationSuperAgent-v2** | EvaluationSuperAgent | Web UI | Automated agent quality scoring and comparison |
-| **marketing-agents-v2** | FlowSuperAgent + MCP | Web UI | 6-agent pipeline: research, strategy, report, file save |
+| **FlowSuperAgent-v2** | FlowSuperAgent | CLI / Web UI | First-match triage routing for support requests |
+| **rai-v2** | RAI Guardrails | CLI / Web UI | SearchAgent with 3 responsible AI guardrail rules |
+| **salesforce-v2** | SalesforceAgent | CLI / Web UI | Salesforce AgentForce knowledge lookup |
+| **EvaluationSuperAgent-v2** | EvaluationSuperAgent | CLI / Web UI | Automated agent quality scoring and comparison |
+| **marketing-agents-v2** | FlowSuperAgent + MCP | CLI / Web UI | 6-agent pipeline: research, strategy, report, file save |
 | **DeepHumanSelf** | Mixed | CLI only | DeepResearchAgent, HumanAgent, Self-Reflection examples |
 
-## Running Web UI Demos
+---
+
+## Running Demos
+
+### Web UI (most demos)
 
 ```bash
 cd <demo-directory>
-source venv/bin/activate
+source ../venv/bin/activate
 python app_ui.py
-# Open http://localhost:8000
+# Open http://localhost:8000 in your browser
 ```
 
-Exception: **marketing-agents-v2** — use `bash start.sh` (starts MCP servers first).
+**Exception:** For **marketing-agents-v2**, use `bash start.sh` instead (it starts the MCP servers first).
 
-## Running CLI Demos
+### CLI
 
 ```bash
 cd <demo-directory>
-source venv/bin/activate
+source ../venv/bin/activate
 python app_cli.py
 ```
 
-## Shared Environment
-
-All demos use the same venv with these key packages:
-- `airefinery-sdk` — AI Refinery SDK (`AsyncAIRefinery` + legacy `DistillerClient`)
-- `fastapi` + `uvicorn` — Web UI server
-- `fastmcp`, `mcp`, `mcp-proxy` — MCP server support
-- `python-dotenv` — Environment variable loading
-
-## Credentials
-
-Web UI demos load credentials from `.env` in each demo directory. DeepHumanSelf uses environment variables directly:
+### DeepHumanSelf (nested directories)
 
 ```bash
-export API_KEY="<your-key>"
-export AIREFINERY_ADDRESS="https://api.airefinery.accenture.com"
+cd "DeepHumanSelf/DeepResearchAgent Examples"
+source ../../venv/bin/activate
+python example.py
+
+cd "DeepHumanSelf/HumanAgent Examples"
+source ../../venv/bin/activate
+python example.py demo1   # or demo2, demo3
+
+cd "DeepHumanSelf/Self-Reflection Examples"
+source ../../venv/bin/activate
+python example.py
 ```
+
+---
+
+## Example Queries
+
+| Demo | Try This |
+|------|----------|
+| cat-service-diagnostic | `Fault code E101-3 on a Cat 320, engine misfiring` |
+| FlowSuperAgent-v2 | `My internet connection keeps dropping every few minutes` |
+| rai-v2 | `What are best practices for team communication?` |
+| salesforce-v2 | `What is our return policy?` |
+| EvaluationSuperAgent-v2 | `evaluate` (single) or `compare` (two-agent) |
+| marketing-agents-v2 | `Generate a marketing campaign for Agentic AI enterprise adoption` |
+
+---
+
+## Troubleshooting
+
+- **`ModuleNotFoundError`**: Make sure the venv is activated — `source ../venv/bin/activate` (or `../../venv/bin/activate` for DeepHumanSelf sub-demos)
+- **Authentication errors**: Verify your `.env` file has a valid `API_KEY`
+- **Port already in use**: Kill the process on the port (e.g. `lsof -ti:8000 | xargs kill`) then retry
+- **marketing-agents-v2 MCP servers fail**: Ensure Node.js is installed and ports 4001, 4003, 4004, 8000 are free
+- **Web UI not accessible from Windows host**: Use `python app_ui.py --host 0.0.0.0` or access via the WSL IP address
