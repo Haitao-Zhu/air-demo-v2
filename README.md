@@ -35,10 +35,6 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Ready to go
-
-All credentials (API keys, Salesforce keys) are pre-configured in each demo's `.env` file and source code. No additional setup needed.
-
 ---
 
 ## Demos
