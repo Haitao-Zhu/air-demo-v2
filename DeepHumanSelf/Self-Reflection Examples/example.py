@@ -7,7 +7,7 @@ from air.utils import async_print
 
 # Authenticate using environment variables or fallback values.
 BASE_URL = os.getenv("AIREFINERY_ADDRESS", "https://api.airefinery.accenture.com")
-API_KEY = os.getenv("API_KEY", "")
+API_KEY = os.getenv("API_KEY", "Cf7AIvdcT5-ZpEsN_BmGjeQMbrVsI03h-v0mUJPpLxY=")
 SELF_REFLECTION_PROJECT_NAME = "search_agent_self_reflection"
 WITHOUT_SELF_REFLECTION_PROJECT_NAME = "search_agent_without_self_reflection"
 

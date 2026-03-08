@@ -2,9 +2,6 @@
 venv/
 venv
 
-# Environment variables (contains API keys)
-.env
-
 # Python
 __pycache__/
 *.pyc

@@ -35,31 +35,9 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Configure credentials
+### 4. Ready to go
 
-Each demo needs an API key. Create a `.env` file in each demo directory you want to run:
-
-```bash
-# Example: set up rai-v2
-cat > rai-v2/.env << 'EOF'
-API_KEY=<your_air_api_key>
-BASE_URL=https://api.airefinery.accenture.com
-EOF
-```
-
-For **salesforce-v2**, also add:
-
-```
-SALESFORCE_CLIENT_KEY=<your_key>
-SALESFORCE_CLIENT_SECRET=<your_secret>
-```
-
-For **DeepHumanSelf**, use environment variables instead:
-
-```bash
-export API_KEY="<your_air_api_key>"
-export AIREFINERY_ADDRESS="https://api.airefinery.accenture.com"
-```
+All credentials (API keys, Salesforce keys) are pre-configured in each demo's `.env` file and source code. No additional setup needed.
 
 ---
 

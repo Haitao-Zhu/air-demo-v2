@@ -8,7 +8,7 @@ from air.utils import async_print
 
 # Authenticate using environment variables or fallback values.
 BASE_URL = os.getenv("AIREFINERY_ADDRESS", "https://api.airefinery.accenture.com")
-API_KEY = os.getenv("API_KEY", "")
+API_KEY = os.getenv("API_KEY", "Cf7AIvdcT5-ZpEsN_BmGjeQMbrVsI03h-v0mUJPpLxY=")
 
 
 async def deep_research_test():

@@ -7,7 +7,7 @@ from air.utils import async_print
 
 
 BASE_URL = os.getenv("AIREFINERY_ADDRESS", "https://api.airefinery.accenture.com")
-API_KEY = os.getenv("API_KEY", "")
+API_KEY = os.getenv("API_KEY", "Cf7AIvdcT5-ZpEsN_BmGjeQMbrVsI03h-v0mUJPpLxY=")
 
 
 async def custom_input_method_from_file(query: str) -> str:
