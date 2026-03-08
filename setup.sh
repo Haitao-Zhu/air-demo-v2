@@ -1,64 +1,71 @@
 #!/bin/bash
 # setup.sh - One-time environment setup for all AI Refinery demos
-# Target: Fresh Windows WSL (Ubuntu)
+# Target: Windows WSL (Ubuntu)
 # Usage: bash setup.sh
 set -e
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 VENV_DIR="$REPO_DIR/venv"
-PYTHON_VERSION="3.13"
-PYTHON_CMD="python${PYTHON_VERSION}"
 
 echo "============================================"
 echo "  AI Refinery Demo - Environment Setup"
 echo "============================================"
 echo ""
 
-# --- 1. System packages ---
-echo ">>> [1/5] Installing system dependencies..."
-sudo apt update -y
-sudo apt install -y software-properties-common curl git
+# --- 1. Find Python 3.10+ ---
+PYTHON_CMD=""
+for ver in python3.13 python3.12 python3.11 python3.10 python3; do
+    if command -v "$ver" &>/dev/null; then
+        PYTHON_CMD="$ver"
+        break
+    fi
+done
 
-# --- 2. Python 3.13 via deadsnakes PPA ---
-if command -v "$PYTHON_CMD" &>/dev/null; then
-    echo ">>> [2/5] $PYTHON_CMD already installed: $($PYTHON_CMD --version)"
-else
-    echo ">>> [2/5] Installing $PYTHON_CMD from deadsnakes PPA..."
-    sudo add-apt-repository -y ppa:deadsnakes/ppa
-    sudo apt update -y
-    sudo apt install -y "python${PYTHON_VERSION}" "python${PYTHON_VERSION}-venv" "python${PYTHON_VERSION}-dev"
+if [ -z "$PYTHON_CMD" ]; then
+    echo "ERROR: Python 3.10+ not found. Install Python first."
+    exit 1
 fi
 
-# Ensure venv and distutils packages are present (deadsnakes ships them separately)
-sudo apt install -y "python${PYTHON_VERSION}-venv" 2>/dev/null || true
+echo ">>> [1/4] Using $PYTHON_CMD ($($PYTHON_CMD --version 2>&1))"
 
-# --- 3. Create virtual environment ---
+# Ensure venv module is available
+if ! "$PYTHON_CMD" -m venv --help &>/dev/null; then
+    echo ">>> Installing venv package..."
+    PY_VER=$("$PYTHON_CMD" -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+    sudo apt install -y "python${PY_VER}-venv" 2>/dev/null || true
+fi
+
+# --- 2. Create virtual environment ---
 if [ -L "$VENV_DIR" ]; then
-    echo ">>> Removing stale venv symlink..."
     rm "$VENV_DIR"
 fi
 
 if [ -d "$VENV_DIR" ]; then
-    echo ">>> [3/5] Virtual environment already exists at $VENV_DIR"
+    echo ">>> [2/4] Virtual environment already exists at $VENV_DIR"
 else
-    echo ">>> [3/5] Creating virtual environment..."
+    echo ">>> [2/4] Creating virtual environment..."
     "$PYTHON_CMD" -m venv "$VENV_DIR"
 fi
 
 source "$VENV_DIR/bin/activate"
 
-# --- 4. Install pip and Python packages ---
-echo ">>> [4/5] Installing Python packages..."
+# --- 3. Install Python packages ---
+echo ">>> [3/4] Installing Python packages..."
 pip install --upgrade pip -q
 pip install -r "$REPO_DIR/requirements.txt"
 
-# --- 5. Node.js (for marketing-agents-v2 MCP servers) ---
+# --- 4. Node.js (for marketing-agents-v2 MCP servers) ---
 if command -v node &>/dev/null; then
-    echo ">>> [5/5] Node.js already installed: $(node --version)"
+    echo ">>> [4/4] Node.js already installed: $(node --version)"
+elif command -v npx &>/dev/null; then
+    echo ">>> [4/4] npx already available"
 else
-    echo ">>> [5/5] Installing Node.js 20.x..."
-    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-    sudo apt install -y nodejs
+    echo ">>> [4/4] Installing Node.js..."
+    if command -v curl &>/dev/null; then
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt install -y nodejs
+    else
+        sudo apt install -y nodejs npm 2>/dev/null || echo "WARNING: Could not install Node.js. marketing-agents-v2 will not work."
+    fi
 fi
 
 # --- Verify ---
@@ -67,7 +74,9 @@ echo ">>> Verifying installation..."
 "$VENV_DIR/bin/python" -c "from air import AsyncAIRefinery; print('  airefinery-sdk ... OK')"
 "$VENV_DIR/bin/python" -c "import fastapi, uvicorn, pandas, dotenv, tqdm, pydantic; print('  Core packages ... OK')"
 "$VENV_DIR/bin/python" -c "import fastmcp, httpx, bs4, mcp; print('  MCP packages  ... OK')"
-echo "  Node.js        ... $(node --version)"
+if command -v node &>/dev/null; then
+    echo "  Node.js        ... $(node --version)"
+fi
 
 echo ""
 echo "============================================"
