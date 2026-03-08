@@ -1,0 +1,99 @@
+orchestrator:
+  agent_list:
+    - agent_name: "Cat Service Flow"
+  decompose: false
+
+super_agents:
+  - agent_class: FlowSuperAgent
+    agent_name: "Cat Service Flow"
+    agent_description: |
+      Diagnoses equipment faults end-to-end. Accepts a fault code and machine
+      model, looks up the diagnosis, checks parts availability, and generates
+      a complete service report. Invoke when a technician reports a fault code
+      or equipment issue.
+    config:
+      goal: "Diagnose equipment fault, check parts availability, and generate a complete service report"
+      show_triage_feedback: true
+      agent_list:
+        - agent_name: "Fault Lookup Agent"
+          mode: "first-match"
+          next_step:
+            - condition: "The fault severity is Critical"
+              to: ["Tech Confirmation"]
+            - default: true
+              to: ["Parts Lookup Agent"]
+        - agent_name: "Tech Confirmation"
+          next_step:
+            - "Parts Lookup Agent"
+        - agent_name: "Parts Lookup Agent"
+          next_step:
+            - "Report Generator"
+        - agent_name: "Report Generator"
+
+utility_agents:
+  - agent_class: AnalyticsAgent
+    agent_name: "Fault Lookup Agent"
+    agent_description: |
+      Looks up fault codes in the Cat diagnostic database. Returns severity,
+      root causes, diagnostic steps, required parts, and estimated repair time.
+    config:
+      executor_config:
+        type: PandasExecutor
+        tables:
+          - name: fault_codes
+            file_path: data/fault_codes.csv
+            description: |
+              Caterpillar equipment fault code database.
+              The DataFrame variable name is default_fault_codes.
+              Columns: fault_code (str), severity (Critical/Warning/Info),
+              system (Engine/Hydraulic/Electrical/Transmission), component (str),
+              description (str), machine_model (str),
+              possible_causes (semicolon-separated), diagnostic_steps (semicolon-separated),
+              estimated_repair_hrs (float), required_parts (comma-separated part numbers),
+              tech_level (1=basic, 2=intermediate, 3=specialist)
+
+  - agent_class: HumanAgent
+    agent_name: "Tech Confirmation"
+    agent_description: |
+      For Critical-severity faults, asks the technician to confirm that the
+      symptoms match the diagnosis before proceeding to parts ordering.
+    config:
+      user_input_method: "Custom"
+      wait_time: 120
+      feedback_interpreter: true
+
+  - agent_class: AnalyticsAgent
+    agent_name: "Parts Lookup Agent"
+    agent_description: |
+      Checks parts availability, pricing, and lead times from the dealer
+      inventory for the parts identified during fault diagnosis.
+    config:
+      executor_config:
+        type: PandasExecutor
+        tables:
+          - name: parts_inventory
+            file_path: data/parts_inventory.csv
+            description: |
+              Dealer and warehouse parts inventory.
+              The DataFrame variable name is default_parts_inventory.
+              Columns: part_number (str), part_name (str), category (str),
+              unit_price (float), dealer_stock (int), warehouse_stock (int),
+              lead_time_days (int), compatible_models (comma-separated),
+              superseded_by (str or empty)
+
+  - agent_class: AuthorAgent
+    agent_name: "Report Generator"
+    agent_description: |
+      Compiles a formatted service report from the diagnostic findings
+      including fault analysis, parts availability, and repair instructions.
+    config:
+      memory_attribute_key: "service_report"
+      leading_questions:
+        - question: "Machine and fault identification"
+          prompt: "State the machine model, fault code, severity level, and affected component"
+        - question: "Root cause analysis"
+          prompt: "List possible causes and the recommended step-by-step diagnostic procedure"
+        - question: "Parts required"
+          prompt: "List all required parts with current availability, pricing, and lead times"
+        - question: "Service summary"
+          prompt: "Provide estimated repair time, required technician skill level, and total estimated cost"

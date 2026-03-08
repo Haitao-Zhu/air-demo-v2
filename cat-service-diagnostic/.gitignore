@@ -1,0 +1,5 @@
+venv/
+__pycache__/
+ui_source/node_modules/
+.air/
+*.pyc

@@ -1,0 +1,38 @@
+orchestrator:
+  agent_list:
+    - agent_name: "Evaluation Super Agent"
+
+super_agents:
+  - agent_class: EvaluationSuperAgent
+    agent_name: "Evaluation Super Agent"
+    agent_description: "Evaluates the response quality of target utility agents based on predefined metrics, rubrics and scales."
+    config:
+      agent_list:
+        - agent_name: "Search Agent"
+          evaluation_config:
+            metrics:
+              - metric_name: "Relevance"
+                rubric: "Assess whether the response directly answers the query."
+                scale: "1-5"
+              - metric_name: "Coherence"
+                rubric: "Check if the response is logically structured and understandable."
+                scale: "1-5"
+              - metric_name: "Accuracy"
+                rubric: "Evaluate if the response provides factually correct information."
+                scale: "1-5"
+              - metric_name: "Conciseness"
+                rubric: "Determine if the response is clear and to the point without unnecessary details."
+                scale: "1-5"
+              - metric_name: "Source Quality"
+                rubric: "Evaluate the credibility and reliability of the sources cited in the response."
+                scale: "1-5"
+            sample_queries:
+              - sample: "Where is the capital of France?"
+                ground_truth_answer: "Paris"
+              - sample: "Who was the third president of United States?"
+                ground_truth_answer: "Thomas Jefferson"
+
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: "Search Agent"
+    agent_description: "The agent provides answers based on online search results, retrieving information from the internet to respond to user queries."

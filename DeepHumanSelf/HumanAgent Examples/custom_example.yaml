@@ -1,0 +1,49 @@
+orchestrator:
+  decompose: false
+  enable_routing: false
+  agent_list:
+    - agent_name: "Human in the Loop Advisor"
+
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: "Initial Research Agent"
+    agent_description: "Performs the first phase of research."
+
+  - agent_class: HumanAgent
+    agent_name: "Human Reviewer"
+    agent_description: "This agent interacts with the user to get feedback or additional information."
+    config:
+      user_input_method: "Custom" # Options: ["Terminal", "Custom"]
+      feedback_interpreter: true
+      feedback_schema:
+        is_answer_correct:
+          type: "bool" # Options: ["bool", "str", "int", "float"]
+          description: "Is the answer provided correct?"
+          required: true
+        need_more_detail:
+          type: "bool"
+          description: "Does the answer need more detail?"
+          required: true
+        optional_comment:
+          type: "str"
+          description: "Any additional comments or suggestions"
+          required: false
+
+  - agent_class: SearchAgent
+    agent_name: "Follow-up Research Agent"
+    agent_description: "Performs additional research based on human input."
+
+super_agents:
+  - agent_class: FlowSuperAgent
+    agent_name: "Human in the Loop Advisor"
+    agent_description: "An advisor that incorporates human feedback into the research process."
+    config:
+      goal: "To conduct research, get human feedback, and then write a final report."
+      agent_list:
+        - agent_name: "Initial Research Agent"
+          next_step:
+            - "Human Reviewer"
+        - agent_name: "Human Reviewer"
+          next_step:
+            - "Follow-up Research Agent"
+        - agent_name: "Follow-up Research Agent"

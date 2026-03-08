@@ -1,0 +1,16 @@
+orchestrator:
+  agent_list:
+    - agent_name: "KnowledgeAgent"
+
+utility_agents:
+  - agent_class: SalesforceAgent
+    agent_name: "KnowledgeAgent"
+    agent_description: "The KnowledgeAgent can answer questions based on its knowledge library."
+    config:
+      client_key: "SALESFORCE_CLIENT_KEY"
+      client_secret: "SALESFORCE_CLIENT_SECRET"
+      domain: "orgfarm-f0ec403f08-dev-ed.develop.my.salesforce.com"
+      agent_id: "0XxgK000000KzvNSAS"
+      contexts:
+        - "date"
+        - "chat_history"

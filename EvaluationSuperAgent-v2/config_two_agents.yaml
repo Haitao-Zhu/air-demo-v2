@@ -1,0 +1,61 @@
+orchestrator:
+  agent_list:
+    - agent_name: "Agent Comparator"
+
+super_agents:
+  - agent_class: EvaluationSuperAgent
+    agent_name: "Agent Comparator"
+    agent_description: "Evaluates the response quality of target utility agents based on predefined metrics, rubrics and scales."
+    config:
+      goal: "Assess the performance of target agents using various quality metrics. The evaluation involves defining metrics, generating test queries, querying the target agent, and using an LLM judge to score responses."
+      agent_list:
+        - agent_name: "OnlineSearcher"
+          evaluation_config:
+            metrics:
+              - metric_name: "Relevance"
+                rubric: "Assess whether the response directly answers the query."
+                scale: "1-5"
+              - metric_name: "Coherence"
+                rubric: "Check if the response is logically structured and understandable."
+                scale: "1-5"
+              - metric_name: "Accuracy"
+                rubric: "Evaluate if the response provides factually correct information."
+                scale: "1-5"
+              - metric_name: "Conciseness"
+                rubric: "Determine if the response is clear and to the point without unnecessary details."
+                scale: "1-5"
+              - metric_name: "Source Quality"
+                rubric: "Evaluate the credibility and reliability of the sources cited in the response."
+                scale: "1-5"
+            sample_queries:
+              - sample: "My business is expanding. How do I set up a board of directors?"
+              - sample: "I am interested in AI-generated image field. How can I create a solo-startup?"
+        - agent_name: "BusinessPlanner"
+          evaluation_config:
+            metrics:
+              - metric_name: "Relevance"
+                rubric: "Assess whether the response directly answers the query."
+                scale: "1-5"
+              - metric_name: "Coherence"
+                rubric: "Check if the response is logically structured and understandable."
+                scale: "1-5"
+              - metric_name: "Accuracy"
+                rubric: "Evaluate if the response provides factually correct information."
+                scale: "1-5"
+              - metric_name: "Conciseness"
+                rubric: "Determine if the response is clear and to the point without unnecessary details."
+                scale: "1-5"
+              - metric_name: "Source Quality"
+                rubric: "Evaluate the credibility and reliability of the sources cited in the response."
+                scale: "1-5"
+            sample_queries:
+              - sample: "My business is expanding. How do I set up a board of directors?"
+              - sample: "I am interested in AI-generated image field. How can I create a solo-startup?"
+
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: "OnlineSearcher"
+    agent_description: "The agent provides answers based on online search."
+  - agent_class: PlanningAgent
+    agent_name: "BusinessPlanner"
+    agent_description: "BusinessPlanner helps businesses create comprehensive business plans."

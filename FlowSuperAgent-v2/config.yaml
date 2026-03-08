@@ -1,0 +1,54 @@
+memory_config:
+  save_config:
+    auto_load: false
+
+orchestrator:
+  agent_list:
+    - agent_name: "Support Router"
+
+utility_agents:
+  - agent_class: PlanningAgent
+    agent_name: "Support Classifier"
+    agent_description: "Classify the support issue type as technical or billing."
+
+  - agent_class: PlanningAgent
+    agent_name: "Technical Troubleshooter"
+    agent_description: "Provide troubleshooting help for technical issues."
+
+  - agent_class: PlanningAgent
+    agent_name: "Billing Assistant"
+    agent_description: "Assist with billing-related questions and actions."
+
+  - agent_class: PlanningAgent
+    agent_name: "Final Support Summary"
+    agent_description: "Summarize the solution steps and next actions for the user."
+
+super_agents:
+  - agent_class: FlowSuperAgent
+    agent_name: "Support Router"
+    agent_description: |
+      Directs support requests to the correct agents based on the user's issue type and combines their outputs into a final summary.
+    config:
+      goal: |
+        Classify the issue and handle the support request accordingly.
+      show_triage_feedback: True
+      agent_list:
+        - agent_name: Support Classifier
+          mode: first-match
+          next_step:
+            - condition: 'issue is technical'
+              to: ['Technical Troubleshooter']
+            - condition: 'issue is billing'
+              to: ['Billing Assistant']
+            - default: true
+              to: ['Billing Assistant', 'Technical Troubleshooter']
+
+        - agent_name: 'Technical Troubleshooter'
+          next_step:
+            - 'Final Support Summary'
+
+        - agent_name: 'Billing Assistant'
+          next_step:
+            - 'Final Support Summary'
+
+        - agent_name: 'Final Support Summary'

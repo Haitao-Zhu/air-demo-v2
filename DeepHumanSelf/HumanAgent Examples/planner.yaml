@@ -1,0 +1,35 @@
+orchestrator:
+  decompose: false
+  enable_routing: false
+  agent_list:
+    - agent_name: "Human in the Loop Dinner Planner"
+
+utility_agents:
+  - agent_class: PlanningAgent
+    agent_name: "Dinner Planner Agent"
+    agent_description: "Generates a dinner plan."
+
+  - agent_class: HumanAgent
+    agent_name: "User Feedback Agent"
+    agent_description: "Asks for user feedback on the proposed dinner plan."
+    config:
+      user_input_method: "Terminal" # Options: ["Terminal", "Custom"]
+  
+  - agent_class: PlanningAgent
+    agent_name: "Dinner Planner Refinement Agent"
+    agent_description: "Refine the dinner plan with human feedback."
+
+super_agents:
+  - agent_class: FlowSuperAgent
+    agent_name: "Human in the Loop Dinner Planner"
+    agent_description: "Plans a dinner with initial proposal and refinement after human feedback."
+    config:
+      goal: "To generate dinner plan, give an initial plan, get user feedback, and then write a final plan."
+      agent_list:
+        - agent_name: "Dinner Planner Agent"
+          next_step:
+            - "User Feedback Agent"
+        - agent_name: "User Feedback Agent"
+          next_step:
+            - "Dinner Planner Refinement Agent"
+        - agent_name: "Dinner Planner Refinement Agent"

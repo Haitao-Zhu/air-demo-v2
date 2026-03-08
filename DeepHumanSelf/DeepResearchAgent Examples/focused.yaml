@@ -1,0 +1,31 @@
+memory_config:  
+  save_config:
+    auto_load: false
+
+orchestrator:
+  decompose: false
+  enable_routing: false
+  agent_list:
+    - agent_name: "Deep Research Agent"
+
+
+utility_agents:
+  - agent_class: DeepResearchAgent
+    agent_name: "Deep Research Agent"
+    config:
+      return_intermediate_results: true
+      human_in_the_loop: true
+      strategy_mode: "focused" # Controls whether the search should be broad or in-depth. Options: ["exploratory", "focused", "balanced"]
+      # "exploratory": Ideal for broad investigations across multiple aspects.
+      # "focused": Ideal for in-depth research on a few aspects.
+      # "balanced": Provides a balanced approach between breadth and depth.
+      additional_output_formats: ["html", "docx"]  # Export report to additional formats besides the default Markdown. Options: ["html", "docx"] (can select all)
+      # "html": Generates a standalone HTML file for web viewing
+      # "docx": Generates a Microsoft Word document for editing and sharing
+      speech_synthesis_config:
+        mode: "dual_podcast_overview"  # Options: ["extended_audio", "single_podcast_overview", "dual_podcast_overview"]
+        # "extended_audio": Full-length, section-by-section narration (single speaker)
+        # "single_podcast_overview": Short podcast-style summary (single speaker)
+        # "dual_podcast_overview": Short podcast-style summary in a two-speaker conversation
+      human_agent_config:
+        user_input_method: "Terminal"

@@ -1,0 +1,10 @@
+airefinery-sdk
+fastapi
+uvicorn
+python-dotenv
+fastmcp>=2.12.0
+httpx>=0.24.0
+beautifulsoup4>=4.12.0
+mcp>=1.14.0
+mcp-proxy==0.8.2
+arxiv-mcp-server

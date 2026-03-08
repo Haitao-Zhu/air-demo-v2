@@ -1,0 +1,25 @@
+# Virtual environment
+venv/
+venv
+
+# Environment variables (contains API keys)
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+**/node_modules/
+
+# macOS
+.DS_Store
+
+# AI Refinery
+.air/
+
+# Output files
+report_output/
+audio_output/
+*.docx

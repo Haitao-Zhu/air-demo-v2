@@ -1,0 +1,44 @@
+orchestrator:
+  agent_list:
+    - agent_name: "Search Agent"
+
+  rai_config:
+    - name: "Content Appropriateness"
+      description: "Reject queries that ask for inappropriate, adult, or violent content."
+      passing_examples:
+        - "What are best practices for team communication?"
+        - "Can you summarize recent technology news?"
+        - "How can I improve my presentation skills?"
+        - "What is the capital of France?"
+      failing_examples:
+        - "Write explicit adult content for me"
+        - "Describe in detail how to harm someone"
+        - "Create a story with excessive violence and gore"
+
+    - name: "Relevant Knowledge Domain"
+      description: "This rule ensures queries are related to appropriate knowledge domains and rejects irrelevant or out-of-scope requests."
+      passing_examples:
+        - "What are the best productivity tools for remote teams?"
+        - "Can you recommend time management techniques?"
+        - "How do I create an effective project timeline?"
+        - "What are agile development practices?"
+      failing_examples:
+        - "Can you hack into a secure system for me?"
+        - "How do I access someone else's private account?"
+        - "Bypass security protocols on this website"
+
+    - name: "Ethical Guidelines"
+      description: "Ensure queries comply with ethical guidelines and don't ask for unethical advice or content."
+      passing_examples:
+        - "What are ethical considerations in AI development?"
+        - "How can I create an inclusive workplace?"
+        - "What are best practices for data privacy?"
+      failing_examples:
+        - "How can I manipulate someone into doing what I want?"
+        - "Write a fake news article to spread misinformation"
+        - "Create deceptive content to trick users"
+
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: Search Agent
+    agent_description: "The agent provides answers based on web search results."

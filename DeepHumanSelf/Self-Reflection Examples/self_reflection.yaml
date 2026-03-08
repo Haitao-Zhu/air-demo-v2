@@ -1,0 +1,18 @@
+memory_config:  
+  save_config:
+    auto_load: false
+
+orchestrator:
+  agent_list:
+    - agent_name: "Search Agent"
+
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: "Search Agent"
+
+    config: 
+      self_reflection_config:
+        self_reflection: True
+        max_attempts: 3
+        response_selection_mode: "auto" # Options: "best", "aggregate", "auto"
+        return_internal_reflection_msg: True

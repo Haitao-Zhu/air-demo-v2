@@ -1,0 +1,5 @@
+airefinery-sdk
+fastapi
+uvicorn
+python-dotenv
+pandas
