@@ -13,6 +13,7 @@ source venv/bin/activate
 
 | Demo | Type | Interface | Description |
 |------|------|-----------|-------------|
+| **cat-service-diagnostic** | FlowSuperAgent + HumanAgent | CLI / Web UI | Equipment diagnostic with triage routing and technician confirmation |
 | **FlowSuperAgent-v2** | FlowSuperAgent | Web UI | First-match triage routing for support requests |
 | **rai-v2** | RAI Guardrails | Web UI | SearchAgent with 3 responsible AI guardrail rules |
 | **salesforce-v2** | SalesforceAgent | Web UI | Salesforce AgentForce knowledge lookup |
