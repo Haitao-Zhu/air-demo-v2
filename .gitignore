@@ -20,3 +20,15 @@ __pycache__/
 report_output/
 audio_output/
 *.docx
+
+# Windows Zone.Identifier files
+*Zone.Identifier
+
+# Screenshots
+*.png
+
+# Zip archives
+*.zip
+
+# Unzipped old versions
+*-old/
