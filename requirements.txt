@@ -10,6 +10,7 @@ python-dotenv
 
 # --- Data processing (cat-service-diagnostic) ---
 pandas
+python-dateutil>=2.8.2
 
 # --- DeepResearchAgent (DeepHumanSelf) ---
 pydantic
