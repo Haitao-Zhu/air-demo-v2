@@ -12,9 +12,9 @@ echo "  AI Refinery Demo - Environment Setup"
 echo "============================================"
 echo ""
 
-# --- 1. Find or install Python 3.12+ ---
+# --- 1. Find or install Python 3.12+ (required by airefinery-sdk) ---
 PYTHON_CMD=""
-for ver in python3.13 python3.12 python3.11 python3.10 python3; do
+for ver in python3.13 python3.12; do
     if command -v "$ver" &>/dev/null; then
         PYTHON_CMD="$ver"
         break
@@ -22,7 +22,7 @@ for ver in python3.13 python3.12 python3.11 python3.10 python3; do
 done
 
 if [ -z "$PYTHON_CMD" ]; then
-    echo ">>> Python 3.10+ not found. Installing Python 3.12..."
+    echo ">>> Python 3.12+ not found. Installing Python 3.12 via deadsnakes PPA..."
     sudo apt update -y
     sudo apt install -y software-properties-common
     sudo add-apt-repository -y ppa:deadsnakes/ppa
