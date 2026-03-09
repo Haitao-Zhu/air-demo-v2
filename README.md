@@ -6,102 +6,15 @@ A collection of demo applications built on the **AI Refinery SDK**, showcasing a
 
 ## Environment Setup (Windows WSL)
 
-### Quick Setup (Recommended)
-
 ```bash
 git clone https://github.com/Haitao-Zhu/air-demo-v2.git
 cd air-demo-v2
 bash setup.sh
 ```
 
-`setup.sh` performs the 4 steps below automatically. If it fails at any step, follow the manual instructions for that step and continue.
+This installs Python 3.10+, creates the virtual environment, installs all dependencies, and sets up Node.js — everything needed to run any demo.
 
-### Manual Setup (Step-by-Step)
-
-If `setup.sh` does not work on your environment (e.g., restricted apt repos, missing sudo, corporate proxy), follow these steps manually.
-
-#### Step 1 — Verify Python 3.10+
-
-The demos require Python 3.10 or higher. Check what is available:
-
-```bash
-python3 --version
-```
-
-If the version is 3.10+, you are good. If not, install it:
-
-```bash
-sudo apt update
-sudo apt install -y python3.12 python3.12-venv
-```
-
-If `apt` is blocked, ask your IT team for a Python 3.10+ installation or download from [python.org](https://www.python.org/downloads/).
-
-#### Step 2 — Create Virtual Environment
-
-```bash
-cd air-demo-v2
-python3 -m venv venv
-source venv/bin/activate
-```
-
-If you get `ensurepip is not available`, install the venv module:
-
-```bash
-# Replace 3.12 with your Python version
-sudo apt install -y python3.12-venv
-python3 -m venv venv
-source venv/bin/activate
-```
-
-#### Step 3 — Install Python Packages
-
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-If pip fails with network errors behind a corporate proxy:
-
-```bash
-pip install --proxy http://your-proxy:port -r requirements.txt
-```
-
-If specific packages fail with corruption errors:
-
-```bash
-pip install --force-reinstall --no-cache-dir <package-name>
-```
-
-To verify the installation:
-
-```bash
-python -c "from air import AsyncAIRefinery; print('airefinery-sdk OK')"
-python -c "import fastapi, uvicorn, pandas, pydantic; print('Core packages OK')"
-python -c "import fastmcp, httpx, bs4, mcp; print('MCP packages OK')"
-```
-
-#### Step 4 — Install Node.js (required for marketing-agents-v2 only)
-
-The marketing-agents-v2 demo uses MCP servers that need `npx` (part of Node.js). Other demos do not require Node.js.
-
-```bash
-# Option A: NodeSource (recommended)
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# Option B: Ubuntu default (older version, but works)
-sudo apt install -y nodejs npm
-```
-
-Verify:
-
-```bash
-node --version   # Should show v18+ or v20+
-npx --version
-```
-
-If you cannot install Node.js, all demos except marketing-agents-v2 will still work.
+If `setup.sh` does not work on your environment, see [ONBOARDING.md](ONBOARDING.md) for manual step-by-step instructions and troubleshooting.
 
 ---
 
@@ -173,15 +86,10 @@ python example.py
 
 ## Troubleshooting
 
-| Problem | Fix |
-|---------|-----|
-| `ModuleNotFoundError` | Activate the venv: `source ../venv/bin/activate` |
-| `\r': command not found` in shell scripts | Line-ending issue. Run: `git config core.autocrlf input && git checkout .` |
-| `apt` errors (403 Forbidden, PPA blocked) | Skip `apt`; use the Python already installed on the system (Step 1 above) |
-| `ensurepip is not available` | `sudo apt install -y python3.X-venv` (replace X with your version) |
-| `pip install` fails with corruption | `pip install --force-reinstall --no-cache-dir <package>` |
-| Port already in use | `fuser -k 8000/tcp` (Linux) or `lsof -ti:8000 \| xargs kill` (macOS) |
-| `npx: command not found` | Install Node.js (Step 4 above). Only needed for marketing-agents-v2 |
-| Marketing MCP servers fail to start | Ensure ports 4001, 4003, 4004 are free and Node.js is installed |
-| Web UI not accessible from Windows host | Access via WSL IP: `hostname -I` then open `http://<ip>:8000` |
-| Authentication errors | Verify the `.env` file in the demo directory has a valid `API_KEY` |
+- **`ModuleNotFoundError`**: Make sure the venv is activated — `source ../venv/bin/activate`
+- **Authentication errors**: Verify your `.env` file has a valid `API_KEY`
+- **Port already in use**: Kill the process on the port (e.g. `fuser -k 8000/tcp`) then retry
+- **marketing-agents-v2 MCP servers fail**: Ensure Node.js is installed and ports 4001, 4003, 4004, 8000 are free
+- **Web UI not accessible from Windows host**: Use `hostname -I` to find the WSL IP, then open `http://<ip>:8000`
+
+For more detailed troubleshooting, see [ONBOARDING.md](ONBOARDING.md).
