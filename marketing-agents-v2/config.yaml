@@ -119,15 +119,11 @@ utility_agents:
       wait_time: 260
       enable_interpreter: false
       magic_prompt: |
-        Save the marketing campaign report from the chat history to a local file.
+        Save the marketing report to a file. Call the writeFile tool IMMEDIATELY with:
+        - path: ./marketing_report.md
+        - content: the full report from chat history
 
-        Steps:
-        1. Call list_allowed_directories to get the allowed base path.
-        2. Call write_file with:
-           - path: <allowed_directory>/marketing_report_YYYY-MM-DD.md (use today's date)
-           - content: the full report text from the chat history
-
-        You MUST call write_file. Do not stop after listing directories.
+        Do NOT call list_allowed_directories first. Call writeFile directly.
       contexts:
         - "chat_history"
         - "date"
