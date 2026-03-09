@@ -1,0 +1,26 @@
+orchestrator:
+  decompose: false
+  enable_routing: false
+  agent_list:
+    - agent_name: "Fallback Advisor"
+
+utility_agents:
+  - agent_class: HumanAgent
+    agent_name: "User Approval"
+    agent_description: "Asks the user whether to switch to fallback agents when Azure AI agents are unavailable."
+    config:
+      user_input_method: "Terminal"
+      feedback_schema:
+        switch_to_fallback:
+          type: "bool"
+          description: "Azure AI agents are unavailable. Switch to fallback agents (SearchAgent, PlanningAgent, AuthorAgent)?"
+          required: true
+
+super_agents:
+  - agent_class: FlowSuperAgent
+    agent_name: "Fallback Advisor"
+    agent_description: "Asks user approval to switch to fallback agents."
+    config:
+      goal: "Ask the user if they want to switch to fallback agents since Azure AI agents are unavailable."
+      agent_list:
+        - agent_name: "User Approval"

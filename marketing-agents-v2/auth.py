@@ -12,8 +12,10 @@ base_url = os.environ.get("BASE_URL", "https://api.airefinery.accenture.com")
 
 AZURE_CONFIG = "config_azure.yaml"
 FALLBACK_CONFIG = "config.yaml"
+FALLBACK_CHECK_CONFIG = "config_fallback_check.yaml"
 AZURE_PROJECT = "marketing_agents_v2_azure"
 FALLBACK_PROJECT = "marketing_agents_v2"
+FALLBACK_CHECK_PROJECT = "marketing_agents_v2_fallback_check"
 
 client = AsyncAIRefinery(api_key=api_key, base_url=base_url)
 
@@ -47,10 +49,7 @@ def _test_azure_connection():
             credential=DefaultAzureCredential(),
             conn_str=conn_str,
         )
-        # Actually create a thread — this is the operation that requires
-        # the "Azure AI Developer" RBAC role and will fail fast if missing.
         thread = ai_client.agents.create_thread()
-        # Clean up the test thread
         ai_client.agents.delete_thread(thread.id)
         return True
     except Exception as e:
@@ -65,30 +64,60 @@ def _test_azure_connection():
         return False
 
 
-def _prompt_fallback():
-    """Ask user whether to switch to fallback agents."""
-    print()
-    print("=" * 60)
-    print("  Azure AI agents are not available.")
-    print("  This may be due to missing Azure SDK, expired credentials,")
-    print("  or insufficient permissions on the Azure workspace.")
-    print()
-    print("  Fallback agents (SearchAgent, PlanningAgent, AuthorAgent)")
-    print("  can run the same pipeline without Azure.")
-    print("=" * 60)
-    print()
-    while True:
-        answer = input("Switch to fallback agents? [Y/n]: ").strip().lower()
-        if answer in ("", "y", "yes"):
-            return True
-        if answer in ("n", "no"):
-            return False
+def _ask_user_via_human_agent():
+    """
+    Use AIR SDK HumanAgent to ask the user whether to switch to fallback agents.
+    Returns True if user approves, False otherwise.
+    """
+    print(">>> Launching HumanAgent to confirm fallback switch...")
+    _try_register(FALLBACK_CHECK_CONFIG, FALLBACK_CHECK_PROJECT)
+
+    approved = False
+
+    async def _run_human_agent():
+        nonlocal approved
+        async with client.distiller(
+            project=FALLBACK_CHECK_PROJECT,
+            uuid="fallback_check",
+        ) as dc:
+            responses = await dc.query(
+                query="Azure AI agents are not available. Should we switch to fallback agents?"
+            )
+            async for response in responses:
+                if {"role", "content"}.issubset(response):
+                    content = response["content"].lower()
+                    # HumanAgent feedback_schema returns bool for switch_to_fallback
+                    if "true" in content or "yes" in content or "switch" in content:
+                        approved = True
+
+    try:
+        asyncio.run(_run_human_agent())
+    except Exception as e:
+        print(f"  HumanAgent error: {e}")
+        # Fall back to simple input if HumanAgent fails
+        print()
+        print("=" * 60)
+        print("  Azure AI agents are not available.")
+        print("  Fallback agents (SearchAgent, PlanningAgent, AuthorAgent)")
+        print("  can run the same pipeline without Azure.")
+        print("=" * 60)
+        print()
+        while True:
+            answer = input("Switch to fallback agents? [Y/n]: ").strip().lower()
+            if answer in ("", "y", "yes"):
+                approved = True
+                break
+            if answer in ("n", "no"):
+                approved = False
+                break
+
+    return approved
 
 
 def init_project(interactive=True):
     """
     Try Azure config first with a real connection test.
-    On failure, prompt user (if interactive) and fall back.
+    On failure, use HumanAgent (if interactive) to ask user, then fall back.
     Returns (project_name, config_used).
     """
     print(">>> Attempting Azure AI agent configuration...")
@@ -102,7 +131,7 @@ def init_project(interactive=True):
 
     # Azure failed — decide on fallback
     if interactive:
-        use_fallback = _prompt_fallback()
+        use_fallback = _ask_user_via_human_agent()
     else:
         print(">>> Non-interactive mode: auto-switching to fallback agents.")
         use_fallback = True
