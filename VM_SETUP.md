@@ -22,20 +22,22 @@ Instructions for setting up the AI Refinery demo environment on cloud VMs.
 
 ### 2. Download the Code
 
-The demo code is hosted on Azure Blob Storage. Download and extract it inside WSL:
+The demo code is hosted on Azure Blob Storage (requires VPN). Download and extract it inside WSL:
 
 ```bash
 cd ~
-curl -o air.zip "https://arss1caterstg01.blob.core.windows.net/demo/air.zip"
+curl -o air.zip "https://arss1caterstg01.blob.core.windows.net/demo/air.zip?sp=r&st=2026-03-09T15:36:56Z&se=2026-03-09T23:51:56Z&sv=2024-11-04&sr=b&sig=XQwZOkYIMhDTFU%2BeAtaQdfGv%2BSYN3eNTUh12CNwrhmE%3D"
 unzip air.zip
 ```
 
 If `curl` is not available:
 
 ```bash
-wget -O air.zip "https://arss1caterstg01.blob.core.windows.net/demo/air.zip"
+wget -O air.zip "https://arss1caterstg01.blob.core.windows.net/demo/air.zip?sp=r&st=2026-03-09T15:36:56Z&se=2026-03-09T23:51:56Z&sv=2024-11-04&sr=b&sig=XQwZOkYIMhDTFU%2BeAtaQdfGv%2BSYN3eNTUh12CNwrhmE%3D"
 unzip air.zip
 ```
+
+> **Note:** The SAS token above expires on **2026-03-09 23:51 UTC**. If the download returns a tiny file (~248 bytes) instead of the zip, the token has expired — contact the workshop organizer for a new URL.
 
 If `unzip` is not installed:
 
