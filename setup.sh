@@ -40,9 +40,17 @@ if ! "$PYTHON_CMD" -m pip --version &>/dev/null; then NEED_APT=true; fi
 if ! "$PYTHON_CMD" -m venv --help &>/dev/null; then NEED_APT=true; fi
 
 if [ "$NEED_APT" = true ]; then
-    echo ">>> Installing pip and venv packages..."
+    echo ">>> Installing pip and venv packages for Python ${PY_VER}..."
     sudo apt update -y
-    sudo apt install -y "python${PY_VER}-pip" "python${PY_VER}-venv" python3-pip 2>/dev/null || true
+    sudo apt install -y "python${PY_VER}-venv"
+    sudo apt install -y "python${PY_VER}-pip" python3-pip || true
+
+    # Verify venv is now available
+    if ! "$PYTHON_CMD" -m venv --help &>/dev/null; then
+        echo "ERROR: Failed to install python${PY_VER}-venv. Please run manually:"
+        echo "  sudo apt install -y python${PY_VER}-venv"
+        exit 1
+    fi
 fi
 
 # --- 2. Create virtual environment ---
