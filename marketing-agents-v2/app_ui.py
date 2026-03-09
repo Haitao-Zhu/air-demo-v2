@@ -1,6 +1,6 @@
+import asyncio
 import json
 import os
-import sys
 
 from air import AsyncAIRefinery
 from dotenv import load_dotenv
@@ -20,17 +20,39 @@ FALLBACK_PROJECT = "marketing_agents_v2"
 
 client = AsyncAIRefinery(api_key=api_key, base_url=base_url)
 
-# Try Azure first, auto-fallback for UI (non-interactive)
-project_name = FALLBACK_PROJECT
-try:
-    client.distiller.create_project(config_path=AZURE_CONFIG, project=AZURE_PROJECT)
-    from azure.ai.projects import AIProjectClient  # noqa: F401
-    project_name = AZURE_PROJECT
-    print(f">>> Using Azure AI agents (project: {AZURE_PROJECT})")
-except Exception as e:
-    print(f">>> Azure agents unavailable ({e}), using fallback agents.")
-    client.distiller.create_project(config_path=FALLBACK_CONFIG, project=FALLBACK_PROJECT)
-    print(f">>> Using fallback agents (project: {FALLBACK_PROJECT})")
+
+def _init_project():
+    """Try Azure with real connection test, auto-fallback for UI."""
+    # Register Azure config
+    try:
+        client.distiller.create_project(config_path=AZURE_CONFIG, project=AZURE_PROJECT)
+    except Exception as e:
+        print(f">>> Azure config registration failed: {e}")
+        client.distiller.create_project(config_path=FALLBACK_CONFIG, project=FALLBACK_PROJECT)
+        print(f">>> Using fallback agents (project: {FALLBACK_PROJECT})")
+        return FALLBACK_PROJECT
+
+    # Test Azure connection
+    try:
+        from azure.ai.projects import AIProjectClient  # noqa: F401
+
+        async def _test():
+            async with client.distiller(
+                project=AZURE_PROJECT, uuid="azure_test"
+            ) as dc:
+                pass
+
+        asyncio.run(_test())
+        print(f">>> Using Azure AI agents (project: {AZURE_PROJECT})")
+        return AZURE_PROJECT
+    except Exception as e:
+        print(f">>> Azure connection test failed: {e}")
+        client.distiller.create_project(config_path=FALLBACK_CONFIG, project=FALLBACK_PROJECT)
+        print(f">>> Using fallback agents (project: {FALLBACK_PROJECT})")
+        return FALLBACK_PROJECT
+
+
+project_name = _init_project()
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")

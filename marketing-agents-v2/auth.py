@@ -1,3 +1,4 @@
+import asyncio
 import os
 import sys
 
@@ -27,6 +28,39 @@ def _try_register(config_path, project_name):
         return False
 
 
+def _test_azure_connection():
+    """
+    Test that Azure agents are actually reachable by opening a
+    connection to the Azure project. Returns True if it works.
+    """
+    try:
+        from azure.ai.projects import AIProjectClient  # noqa: F401
+    except ImportError:
+        print("  Azure AI SDK not installed (pip install 'airefinery-sdk[tah-azure-ai]').")
+        return False
+
+    async def _connect_test():
+        async with client.distiller(
+            project=AZURE_PROJECT,
+            uuid="azure_connection_test",
+        ) as dc:
+            # If we get here, Azure executor initialized successfully
+            pass
+
+    try:
+        asyncio.run(_connect_test())
+        return True
+    except Exception as e:
+        err_msg = str(e)
+        if "permissions" in err_msg.lower():
+            print(f"  Azure RBAC error: insufficient permissions on the workspace.")
+        elif "credential" in err_msg.lower() or "token" in err_msg.lower():
+            print(f"  Azure credential error: run 'az login --scope https://ml.azure.com/.default'")
+        else:
+            print(f"  Azure connection failed: {e}")
+        return False
+
+
 def _prompt_fallback():
     """Ask user whether to switch to fallback agents."""
     print()
@@ -49,20 +83,18 @@ def _prompt_fallback():
 
 def init_project(interactive=True):
     """
-    Try Azure config first. On failure, prompt user (if interactive)
-    and fall back to non-Azure config.
+    Try Azure config first with a real connection test.
+    On failure, prompt user (if interactive) and fall back.
     Returns (project_name, config_used).
     """
-    # Try Azure
     print(">>> Attempting Azure AI agent configuration...")
     if _try_register(AZURE_CONFIG, AZURE_PROJECT):
-        # Test that Azure SDK is importable (client-side executor requirement)
-        try:
-            from azure.ai.projects import AIProjectClient  # noqa: F401
-            print(">>> Azure AI agents registered successfully.")
+        print(">>> Testing Azure agent connection...")
+        if _test_azure_connection():
+            print(">>> Azure AI agents ready.")
             return AZURE_PROJECT, AZURE_CONFIG
-        except ImportError:
-            print("  Azure AI SDK not installed (airefinery-sdk[tah-azure-ai]).")
+        else:
+            print(">>> Azure agents registered but connection test failed.")
 
     # Azure failed — decide on fallback
     if interactive:
