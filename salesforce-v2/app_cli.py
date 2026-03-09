@@ -26,9 +26,9 @@ def main():
     print("Salesforce Knowledge Agent")
     print("=" * 40)
     print("Example queries:")
-    print('  "What is our return policy?"')
-    print('  "How do I reset my password?"')
-    print('  "What are the business hours for support?"')
+    print('  "Show me the features, benefits, and use cases of Salesforce Agentforce and Data Cloud"')
+    print('  "How do AgentForce and Data Cloud work together to enhance CRM processes?"')
+    print('  "Show me the features related to AI-powered customer interactions"')
     print()
 
     while True:

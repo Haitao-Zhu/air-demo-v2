@@ -31,6 +31,6 @@ python app_cli.py
 
 ## Example Prompts
 
-- "What is our return policy?"
-- "How do I reset my password?"
-- "What are the business hours for support?"
+- "Show me the features, benefits, and use cases of Salesforce Agentforce and Data Cloud"
+- "How do AgentForce and Data Cloud work together to enhance CRM processes?"
+- "Show me the features related to AI-powered customer interactions"

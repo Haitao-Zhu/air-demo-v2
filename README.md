@@ -76,7 +76,7 @@ python example.py
 | cat-service-diagnostic | `Fault code E101-3 on a Cat 320, engine misfiring` |
 | FlowSuperAgent-v2 | `My internet connection keeps dropping every few minutes` |
 | rai-v2 | `What are best practices for team communication?` |
-| salesforce-v2 | `What is our return policy?` |
+| salesforce-v2 | `Show me the features, benefits, and use cases of Salesforce Agentforce and Data Cloud` |
 | EvaluationSuperAgent-v2 | `evaluate` (single) or `compare` (two-agent) |
 | marketing-agents-v2 | `Generate a marketing campaign for Agentic AI enterprise adoption` |
 
