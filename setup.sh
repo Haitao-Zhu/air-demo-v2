@@ -24,8 +24,16 @@ done
 if [ -z "$PYTHON_CMD" ]; then
     echo ">>> Python 3.12+ not found. Installing Python 3.12 via deadsnakes PPA..."
     sudo apt update -y
-    sudo apt install -y software-properties-common
-    sudo add-apt-repository -y ppa:deadsnakes/ppa
+
+    # Add deadsnakes PPA source list directly (avoids add-apt-repository SSL issues)
+    CODENAME=$(lsb_release -cs)
+    echo "deb https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu $CODENAME main" \
+        | sudo tee /etc/apt/sources.list.d/deadsnakes.list
+
+    # Import GPG key via HTTPS (keyserver HKP port 80 is often blocked)
+    curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF23C5A6CF475977595C89F51BA6932366A755776" \
+        | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/deadsnakes.gpg
+
     sudo apt update -y
     sudo apt install -y python3.12 python3.12-venv python3.12-dev
     PYTHON_CMD="python3.12"
