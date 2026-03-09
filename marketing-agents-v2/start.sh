@@ -7,16 +7,20 @@ cd "$SCRIPT_DIR"
 
 # Load environment variables
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    set -a
+    . .env
+    set +a
     echo "Loaded .env"
 fi
 
 # Activate shared venv
-source ../venv/bin/activate 2>/dev/null || source ./venv/bin/activate 2>/dev/null || true
+source ./venv/bin/activate 2>/dev/null || source ../venv/bin/activate 2>/dev/null || true
 
 # Kill any leftover processes on our ports
 echo "Cleaning up old processes..."
-lsof -ti:4001,4003,4004,8000 2>/dev/null | xargs kill -9 2>/dev/null || true
+for port in 4001 4003 4004 8000; do
+    lsof -ti:"$port" 2>/dev/null | xargs kill -9 2>/dev/null || true
+done
 sleep 1
 
 # --- 1. Start DuckDuckGo MCP server (HTTP stream on port 4003) ---
