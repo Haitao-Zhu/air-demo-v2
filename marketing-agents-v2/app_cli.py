@@ -3,7 +3,7 @@ import uuid
 
 from air import AsyncAIRefinery
 
-from auth import api_key, base_url, project_name
+from auth import api_key, base_url, project_name, active_config
 
 
 async def get_response(query: str, user_id: str):
@@ -23,8 +23,9 @@ async def get_response(query: str, user_id: str):
 
 def main():
     user_id = str(uuid.uuid4()).replace("-", "_")
-    print("Marketing Campaign Generator")
-    print("=" * 40)
+    mode = "Azure AI" if "azure" in active_config else "Fallback"
+    print(f"\nMarketing Campaign Generator ({mode} mode)")
+    print("=" * 50)
     print("Example queries:")
     print('  "Generate a marketing campaign for Agentic AI enterprise adoption"')
     print('  "Create a go-to-market strategy for a new cloud security product"')

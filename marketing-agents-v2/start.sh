@@ -11,8 +11,8 @@ if [ -f .env ]; then
     echo "Loaded .env"
 fi
 
-# Activate shared venv (./venv is a symlink to ../../venv)
-source ./venv/bin/activate 2>/dev/null || source ../../venv/bin/activate 2>/dev/null || true
+# Activate shared venv
+source ../venv/bin/activate 2>/dev/null || source ./venv/bin/activate 2>/dev/null || true
 
 # Kill any leftover processes on our ports
 echo "Cleaning up old processes..."
