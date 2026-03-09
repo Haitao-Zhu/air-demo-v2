@@ -67,6 +67,7 @@ def _init_project():
 
 
 project_name = _init_project()
+using_azure = project_name == AZURE_PROJECT
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -75,6 +76,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 async def read_index():
     return FileResponse("static/index.html")
+
+
+@app.get("/api/status")
+async def get_status():
+    return {"using_azure": using_azure}
 
 
 @app.websocket("/ws/{uuid}")

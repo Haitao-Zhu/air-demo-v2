@@ -6,6 +6,17 @@
   margin: 0 auto;
 }
 
+/* Fallback banner */
+.fallback-banner {
+  flex-shrink: 0;
+  padding: 10px 24px;
+  background: #fff3cd;
+  color: #856404;
+  font-size: 14px;
+  text-align: center;
+  border-bottom: 1px solid #ffc107;
+}
+
 /* Header */
 .header {
   flex-shrink: 0;

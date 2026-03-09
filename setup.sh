@@ -12,7 +12,7 @@ echo "  AI Refinery Demo - Environment Setup"
 echo "============================================"
 echo ""
 
-# --- 1. Find Python 3.10+ ---
+# --- 1. Find or install Python 3.12+ ---
 PYTHON_CMD=""
 for ver in python3.13 python3.12 python3.11 python3.10 python3; do
     if command -v "$ver" &>/dev/null; then
@@ -22,22 +22,38 @@ for ver in python3.13 python3.12 python3.11 python3.10 python3; do
 done
 
 if [ -z "$PYTHON_CMD" ]; then
-    echo "ERROR: Python 3.10+ not found. Install Python first."
-    exit 1
+    echo ">>> Python 3.10+ not found. Installing Python 3.12..."
+    sudo apt update -y
+    sudo apt install -y software-properties-common
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+    sudo apt update -y
+    sudo apt install -y python3.12 python3.12-venv python3.12-dev
+    PYTHON_CMD="python3.12"
 fi
 
 echo ">>> [1/4] Using $PYTHON_CMD ($($PYTHON_CMD --version 2>&1))"
 
-# Ensure venv module is available
-if ! "$PYTHON_CMD" -m venv --help &>/dev/null; then
-    echo ">>> Installing venv package..."
-    PY_VER=$("$PYTHON_CMD" -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
-    sudo apt install -y "python${PY_VER}-venv" 2>/dev/null || true
+# Ensure pip and venv modules are available BEFORE creating venv
+PY_VER=$("$PYTHON_CMD" -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+NEED_APT=false
+if ! "$PYTHON_CMD" -m pip --version &>/dev/null; then NEED_APT=true; fi
+if ! "$PYTHON_CMD" -m venv --help &>/dev/null; then NEED_APT=true; fi
+
+if [ "$NEED_APT" = true ]; then
+    echo ">>> Installing pip and venv packages..."
+    sudo apt update -y
+    sudo apt install -y "python${PY_VER}-pip" "python${PY_VER}-venv" python3-pip 2>/dev/null || true
 fi
 
 # --- 2. Create virtual environment ---
 if [ -L "$VENV_DIR" ]; then
     rm "$VENV_DIR"
+fi
+
+# Remove broken venv (e.g. from a previous failed attempt)
+if [ -d "$VENV_DIR" ] && [ ! -f "$VENV_DIR/bin/activate" ]; then
+    echo ">>> Removing broken virtual environment..."
+    rm -rf "$VENV_DIR"
 fi
 
 if [ -d "$VENV_DIR" ]; then

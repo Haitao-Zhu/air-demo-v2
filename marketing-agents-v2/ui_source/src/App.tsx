@@ -43,6 +43,7 @@ export default function App() {
   const [input, setInput] = useState('')
   const [status, setStatus] = useState<ConnectionStatus>('connecting')
   const [isWaiting, setIsWaiting] = useState(false)
+  const [usingAzure, setUsingAzure] = useState<boolean | null>(null)
   const wsRef = useRef<WebSocket | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -54,6 +55,13 @@ export default function App() {
   useEffect(() => {
     scrollToBottom()
   }, [messages, scrollToBottom])
+
+  useEffect(() => {
+    fetch('/api/status')
+      .then((res) => res.json())
+      .then((data) => setUsingAzure(data.using_azure))
+      .catch(() => setUsingAzure(null))
+  }, [])
 
   useEffect(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
@@ -149,6 +157,12 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {usingAzure === false && (
+        <div className="fallback-banner">
+          Azure AI Agent is not available — switched to AI Refinery agents.
+        </div>
+      )}
 
       <main className="chat-area">
         {messages.length === 0 ? (
