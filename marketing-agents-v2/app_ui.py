@@ -21,6 +21,29 @@ FALLBACK_PROJECT = "marketing_agents_v2"
 client = AsyncAIRefinery(api_key=api_key, base_url=base_url)
 
 
+def _test_azure_connection():
+    """Test Azure by creating a thread — catches RBAC errors early."""
+    try:
+        from azure.ai.projects import AIProjectClient
+        from azure.identity import DefaultAzureCredential
+    except ImportError:
+        print(">>> Azure AI SDK not installed.")
+        return False
+
+    conn_str = "eastus.api.azureml.ms;e1c871de-0c7e-4acf-840a-e2e4b7d26903;airefinery-az-integration;air-az-integration"
+    try:
+        ai_client = AIProjectClient.from_connection_string(
+            credential=DefaultAzureCredential(),
+            conn_str=conn_str,
+        )
+        thread = ai_client.agents.create_thread()
+        ai_client.agents.delete_thread(thread.id)
+        return True
+    except Exception as e:
+        print(f">>> Azure connection test failed: {e}")
+        return False
+
+
 def _init_project():
     """Try Azure with real connection test, auto-fallback for UI."""
     # Register Azure config
@@ -32,21 +55,12 @@ def _init_project():
         print(f">>> Using fallback agents (project: {FALLBACK_PROJECT})")
         return FALLBACK_PROJECT
 
-    # Test Azure connection
-    try:
-        from azure.ai.projects import AIProjectClient  # noqa: F401
-
-        async def _test():
-            async with client.distiller(
-                project=AZURE_PROJECT, uuid="azure_test"
-            ) as dc:
-                pass
-
-        asyncio.run(_test())
+    # Test Azure connection with actual thread creation
+    if _test_azure_connection():
         print(f">>> Using Azure AI agents (project: {AZURE_PROJECT})")
         return AZURE_PROJECT
-    except Exception as e:
-        print(f">>> Azure connection test failed: {e}")
+    else:
+        print(f">>> Azure not available, switching to fallback agents.")
         client.distiller.create_project(config_path=FALLBACK_CONFIG, project=FALLBACK_PROJECT)
         print(f">>> Using fallback agents (project: {FALLBACK_PROJECT})")
         return FALLBACK_PROJECT

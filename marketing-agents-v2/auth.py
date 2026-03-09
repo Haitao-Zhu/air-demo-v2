@@ -30,30 +30,34 @@ def _try_register(config_path, project_name):
 
 def _test_azure_connection():
     """
-    Test that Azure agents are actually reachable by opening a
-    connection to the Azure project. Returns True if it works.
+    Test that Azure agents are actually reachable by creating a thread
+    via the Azure AI Foundry API. This catches RBAC and credential
+    errors that the AIR SDK's lazy initialization would miss.
     """
     try:
-        from azure.ai.projects import AIProjectClient  # noqa: F401
+        from azure.ai.projects import AIProjectClient
+        from azure.identity import DefaultAzureCredential
     except ImportError:
         print("  Azure AI SDK not installed (pip install 'airefinery-sdk[tah-azure-ai]').")
         return False
 
-    async def _connect_test():
-        async with client.distiller(
-            project=AZURE_PROJECT,
-            uuid="azure_connection_test",
-        ) as dc:
-            # If we get here, Azure executor initialized successfully
-            pass
-
+    conn_str = "eastus.api.azureml.ms;e1c871de-0c7e-4acf-840a-e2e4b7d26903;airefinery-az-integration;air-az-integration"
     try:
-        asyncio.run(_connect_test())
+        ai_client = AIProjectClient.from_connection_string(
+            credential=DefaultAzureCredential(),
+            conn_str=conn_str,
+        )
+        # Actually create a thread — this is the operation that requires
+        # the "Azure AI Developer" RBAC role and will fail fast if missing.
+        thread = ai_client.agents.create_thread()
+        # Clean up the test thread
+        ai_client.agents.delete_thread(thread.id)
         return True
     except Exception as e:
         err_msg = str(e)
-        if "permissions" in err_msg.lower():
+        if "permissions" in err_msg.lower() or "authorization" in err_msg.lower():
             print(f"  Azure RBAC error: insufficient permissions on the workspace.")
+            print(f"  Required role: 'Azure AI Developer' on workspace 'air-az-integration'.")
         elif "credential" in err_msg.lower() or "token" in err_msg.lower():
             print(f"  Azure credential error: run 'az login --scope https://ml.azure.com/.default'")
         else:
