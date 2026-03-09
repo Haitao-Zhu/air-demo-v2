@@ -63,7 +63,14 @@ for i in $(seq 1 15); do
     sleep 1
 done
 
-# --- 4. Start FastAPI web UI server ---
-echo "Starting web UI on port 8000..."
-echo "Open http://localhost:8000 in your browser"
-exec python app_ui.py
+MODE="${1:-ui}"
+
+# --- 4. Start the app ---
+if [ "$MODE" = "cli" ]; then
+    echo "Starting CLI mode..."
+    exec python app_cli.py
+else
+    echo "Starting web UI on port 8000..."
+    echo "Open http://localhost:8000 in your browser"
+    exec python app_ui.py
+fi
