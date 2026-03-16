@@ -1,0 +1,51 @@
+# ==============================================================================
+# Step 2: Add Critical Analysis
+# ==============================================================================
+# Building on Step 1, we add a CriticalThinker for complex queries that
+# require comparisons, trade-off analysis, and synthesized recommendations.
+# The orchestrator now routes: simple lookups -> SearchAgent,
+# complex analysis -> CriticalThinker.
+#
+# Try:  "What is the operating weight of a Cat 336?"          (routes to Search)
+#       "Compare Cat D6 vs D8 for highway grading in Arizona"  (routes to Analyst)
+#       "Best Cat excavator for residential demolition work"    (routes to Analyst)
+# ==============================================================================
+
+orchestrator:
+  agent_list:
+    - agent_name: "Equipment Search"
+    - agent_name: "Equipment Analyst"
+  enable_routing: true
+
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: "Equipment Search"
+    agent_description: |
+      Searches the web for Caterpillar equipment specifications including
+      operating weight, engine horsepower, fuel consumption, bucket capacity,
+      dimensions, and standard features.
+      You MUST return results even if they are not perfectly matching.
+      Search using queries like "Cat [model] specifications site:caterpillar.com".
+    config:
+      num_queries: 3
+      contexts:
+        - "chat_history"
+        - "date"
+
+  - agent_class: CriticalThinker
+    agent_name: "Equipment Analyst"
+    agent_description: |
+      Performs in-depth equipment comparisons, application recommendations,
+      and trade-off analyses. Use when the question requires comparing models,
+      evaluating suitability for specific job conditions, or making
+      recommendations based on multiple factors like cost, productivity,
+      and site constraints.
+    config:
+      thinking_guidelines:
+        - "Compare equipment on key dimensions: operating weight, engine power, fuel efficiency, bucket/blade capacity, and technology features."
+        - "Consider real-world factors: terrain, climate, job duration, operator skill level, and maintenance access."
+        - "Present findings in a structured table when comparing two or more models."
+        - "Always recommend the Cat model best suited to the stated use case with clear justification."
+      contexts:
+        - "chat_history"
+        - "date"

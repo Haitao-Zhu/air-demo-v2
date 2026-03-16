@@ -1,0 +1,28 @@
+# ==============================================================================
+# Step 1: Start Simple — One Planning Agent
+# ==============================================================================
+# The simplest possible setup: an orchestrator with a single PlanningAgent.
+# PlanningAgent uses its built-in knowledge to answer questions about Cat
+# equipment. No web search, no data files — just intelligent Q&A.
+#
+# Try:  "What are the key differences between Cat 320 and Cat 336 excavators?"
+#       "What Cat dozer is best for a highway grading project?"
+#       "Recommend a Cat loader for a medium-sized quarry operation"
+# ==============================================================================
+
+orchestrator:
+  agent_list:
+    - agent_name: "Equipment Advisor"
+
+utility_agents:
+  - agent_class: PlanningAgent
+    agent_name: "Equipment Advisor"
+    agent_description: |
+      Answers questions about Caterpillar equipment including model comparisons,
+      application recommendations, and feature explanations. Provides structured
+      advice on which Cat machines are best suited for specific job types,
+      site conditions, and operational requirements.
+    config:
+      contexts:
+        - "chat_history"
+        - "date"

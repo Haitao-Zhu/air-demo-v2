@@ -1,0 +1,107 @@
+##############################################################################
+#  Step 3 — Add Search and Document Generation
+#
+#  Keep Safety Protocol Advisor and Incident Analyst from Step 2.
+#  Add a SearchAgent for live OSHA/MSHA/EPA regulation lookups and
+#  an AuthorAgent for generating safety documents like toolbox talks,
+#  JSAs, and safety alerts.
+#
+#  The orchestrator can now decompose complex queries across all 4 agents.
+#
+#  Try: "Write a toolbox talk about excavator swing radius safety"
+#  Try: "What are the latest OSHA requirements for excavator safety?"
+##############################################################################
+
+orchestrator:
+  agent_list:
+    - agent_name: "Safety Protocol Advisor"
+    - agent_name: "Incident Analyst"
+    - agent_name: "Regulation Searcher"
+    - agent_name: "Safety Doc Writer"
+  enable_routing: true
+  decompose: true
+
+utility_agents:
+  - agent_class: UtilityAgent
+    agent_name: "Safety Protocol Advisor"
+    agent_description: |
+      Caterpillar heavy equipment safety expert. Answers questions about
+      safe operating procedures, required PPE, pre-operation checks,
+      emergency procedures, and applicable OSHA/MSHA regulations for
+      all Cat equipment models.
+    config:
+      magic_prompt: |
+        You are a senior Caterpillar safety engineer with 20 years of experience
+        in heavy construction equipment safety. You have deep knowledge of:
+        - Equipment-specific hazards for all Cat models (excavators, dozers,
+          loaders, articulated trucks, motor graders, compactors, drills)
+        - Required PPE for every operation type and risk level
+        - Pre-operation safety checks and inspection procedures
+        - Emergency response procedures for equipment incidents
+        - OSHA (1926 series for construction, 1910 for general industry),
+          MSHA (30 CFR 56), and EPA regulations
+
+        Always provide specific, actionable safety guidance. Reference applicable
+        regulatory codes (e.g., OSHA 1926.1428 for cranes/excavators, OSHA 1926.502
+        for fall protection, MSHA 30 CFR 56.9100 for haulage). When discussing PPE,
+        specify exact types and ratings (e.g., "ANSI Class 2 high-vis vest",
+        "NRR 25+ earplugs"). Prioritize worker safety above all else.
+
+  - agent_class: AnalyticsAgent
+    agent_name: "Incident Analyst"
+    agent_description: |
+      Analyzes safety incident data. For trend queries, use groupby.
+      For similar incident lookups, return individual rows using queries like:
+      default_incidents[default_incidents['machine_model'].str.contains('320')].head(5)
+      Include all columns: incident_id, date, site, machine_model,
+      incident_type, severity, description, root_cause, corrective_action.
+    config:
+      executor_config:
+        type: PandasExecutor
+        tables:
+          - name: incidents
+            file_path: data/incident_log.csv
+            description: |
+              Safety incident records. Variable name: default_incidents
+              Columns: incident_id, date (YYYY-MM-DD), site, machine_model,
+              incident_type, severity (Critical/High/Medium/Low), description,
+              root_cause, corrective_action, injuries (int), lost_work_days (int)
+          - name: protocols
+            file_path: data/safety_protocols.csv
+            description: |
+              Equipment safety protocols. Variable name: default_protocols
+              Columns: protocol_id, category, applicable_models, hazard,
+              risk_level (Critical/High/Medium/Low), pre_operation_checks,
+              operating_procedure, ppe_required, emergency_procedure, regulatory_ref
+
+  - agent_class: SearchAgent
+    agent_name: "Regulation Searcher"
+    agent_description: |
+      Searches the web for OSHA, MSHA, and EPA safety regulations.
+      You MUST return results even if they are not perfectly matching.
+      Use simple, short search queries like:
+      "OSHA excavator swing radius safety regulation 1926"
+      "OSHA construction equipment exclusion zone requirements"
+      "MSHA heavy equipment safety 30 CFR 56"
+      Do NOT use long multi-sentence search queries.
+      Return regulation title, citation number, and a brief summary.
+    config: {}
+
+  - agent_class: AuthorAgent
+    agent_name: "Safety Doc Writer"
+    agent_description: |
+      Generates formatted safety documents including toolbox talks, JSAs,
+      safety alerts, incident reports, and compliance reports.
+    config:
+      memory_attribute_key: "safety_document"
+      contexts:
+        - "chat_history"
+      leading_questions:
+        - question: "Equipment and operation type"
+          prompt: "Identify the specific Cat equipment model(s) and type of operation being addressed"
+        - question: "Incident or hazard details"
+          prompt: "Describe the incident or hazard using ONLY the details provided by the user. Do NOT fabricate or invent details."
+        - question: "Similar past incidents"
+          prompt: "Reference any similar past incidents found and their corrective actions"
+        - question: "Applicable regulations"
+          prompt: "Cite specific OSHA, MSHA, or EPA regulatory references that apply"

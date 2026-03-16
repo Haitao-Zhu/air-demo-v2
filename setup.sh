@@ -15,7 +15,7 @@ echo ""
 # --- 1. Find or install Python 3.12+ (required by airefinery-sdk) ---
 PYTHON_CMD=""
 for ver in python3.13 python3.12; do
-    if command -v "$ver" &>/dev/null; then
+    if command -v "$ver" &>/dev/null && "$ver" -c "import sys" &>/dev/null; then
         PYTHON_CMD="$ver"
         break
     fi

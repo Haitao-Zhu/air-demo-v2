@@ -1,0 +1,31 @@
+customer_id,customer_name,machine_serial,model,year_manufactured,hours_operated,location,last_service_date,next_service_due,service_interval_hours,warranty_expiry,warranty_type,cva_tier,status
+C001,Turner Construction,CAT320-1001,Cat 320 GC,2024,4250,Phoenix AZ,2026-01-10,2026-02-15,500,2026-04-01,Full Machine,CVA-Premium,Active
+C001,Turner Construction,CAT330-1002,Cat 330,2023,6100,Phoenix AZ,2025-12-20,2026-03-20,500,2026-06-15,Powertrain,CVA-Gold,Active
+C001,Turner Construction,CAT745-1003,Cat 745,2025,1800,Phoenix AZ,2026-02-28,2026-05-28,500,2027-08-01,Full Machine,CVA-Preventive,Active
+C001,Turner Construction,CAT950M-1004,Cat 950M,2022,7200,Phoenix AZ,2025-11-05,2026-01-05,500,2025-12-31,Powertrain,None,Idle
+C001,Turner Construction,CAT140M-1005,Cat 140M,2024,3500,Phoenix AZ,2026-02-01,2026-04-01,500,2026-09-30,Full Machine,CVA-Premium,Active
+C002,Granite Construction,CAT336-2001,Cat 336,2025,2100,Houston TX,2026-03-01,2026-06-01,500,2027-05-15,Full Machine,CVA-Gold,Active
+C002,Granite Construction,CAT320-2002,Cat 320 GC,2023,5400,Houston TX,2026-01-15,2026-03-15,500,2025-11-01,Powertrain,CVA-Preventive,Active
+C002,Granite Construction,CAT D6-2003,Cat D6,2024,3800,Houston TX,2026-02-10,2026-04-10,500,2026-07-20,Full Machine,CVA-Premium,Active
+C002,Granite Construction,CAT745-2004,Cat 745,2022,8500,Houston TX,2025-10-15,2026-01-15,500,2025-06-30,Extended,None,In-Shop
+C002,Granite Construction,CAT330-2005,Cat 330,2025,1200,Houston TX,2026-03-05,2026-06-05,500,2027-09-01,Full Machine,CVA-Gold,Active
+C003,Kiewit,CAT336-3001,Cat 336,2024,4800,Denver CO,2026-01-20,2026-03-20,500,2026-05-01,Powertrain,CVA-Premium,Active
+C003,Kiewit,CAT320-3002,Cat 320 GC,2025,900,Denver CO,2026-03-10,2026-06-10,500,2027-03-15,Full Machine,CVA-Preventive,Active
+C003,Kiewit,CAT D6-3003,Cat D6,2023,6700,Denver CO,2025-12-01,2026-02-01,500,2026-04-15,Powertrain,None,Active
+C003,Kiewit,CAT950M-3004,Cat 950M,2024,3200,Denver CO,2026-02-15,2026-05-15,500,2026-10-01,Full Machine,CVA-Gold,Active
+C003,Kiewit,CAT140M-3005,Cat 140M,2022,7800,Denver CO,2025-09-01,2025-12-01,500,2025-03-31,Extended,None,Idle
+C003,Kiewit,CAT745-3006,Cat 745,2025,1500,Denver CO,2026-03-01,2026-06-01,500,2027-06-20,Full Machine,CVA-Premium,Active
+C004,PCL Construction,CAT330-4001,Cat 330,2024,4100,Atlanta GA,2026-01-25,2026-03-25,500,2026-05-30,Full Machine,CVA-Preventive,Active
+C004,PCL Construction,CAT336-4002,Cat 336,2023,5900,Atlanta GA,2025-11-20,2026-02-20,500,2026-03-31,Powertrain,CVA-Premium,Active
+C004,PCL Construction,CAT D6-4003,Cat D6,2025,800,Atlanta GA,2026-03-08,2026-06-08,500,2027-04-10,Full Machine,CVA-Gold,Active
+C004,PCL Construction,CAT950M-4004,Cat 950M,2024,3600,Atlanta GA,2026-02-05,2026-04-05,500,2026-08-15,Full Machine,CVA-Preventive,Active
+C004,PCL Construction,CAT745-4005,Cat 745,2022,9200,Atlanta GA,2025-08-10,2025-11-10,500,2025-01-31,Extended,None,In-Shop
+C005,Skanska,CAT320-5001,Cat 320 GC,2024,3900,Seattle WA,2026-02-20,2026-04-20,500,2026-06-01,Full Machine,CVA-Gold,Active
+C005,Skanska,CAT330-5002,Cat 330,2023,5700,Seattle WA,2025-12-10,2026-03-10,500,2026-04-20,Powertrain,CVA-Premium,Active
+C005,Skanska,CAT336-5003,Cat 336,2025,1600,Seattle WA,2026-03-05,2026-06-05,500,2027-07-01,Full Machine,CVA-Preventive,Active
+C005,Skanska,CAT D6-5004,Cat D6,2024,4500,Seattle WA,2026-01-05,2026-03-05,500,2026-05-10,Full Machine,CVA-Premium,Active
+C005,Skanska,CAT140M-5005,Cat 140M,2023,6300,Seattle WA,2025-11-15,2026-02-15,500,2025-10-15,Powertrain,None,Active
+C005,Skanska,CAT950M-5006,Cat 950M,2025,1100,Seattle WA,2026-03-12,2026-06-12,500,2027-08-20,Full Machine,CVA-Gold,Active
+C005,Skanska,CAT745-5007,Cat 745,2024,3400,Seattle WA,2026-02-10,2026-04-10,500,2026-09-01,Full Machine,CVA-Preventive,Active
+C001,Turner Construction,CAT D6-1006,Cat D6,2023,5500,Phoenix AZ,2025-12-15,2026-02-28,500,2025-08-01,Powertrain,None,Active
+C003,Kiewit,CAT330-3007,Cat 330,2024,4400,Denver CO,2026-01-05,2026-03-05,500,2026-06-10,Full Machine,CVA-Preventive,Active

@@ -1,0 +1,9 @@
+utility_agents:
+  - agent_class: CustomAgent
+    agent_name: SyntheticDataGenerator
+    agent_description: Generate synthetic data from user query
+    config: {}
+
+orchestrator:
+  agent_list:
+    - agent_name: SyntheticDataGenerator

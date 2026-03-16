@@ -1,0 +1,78 @@
+orchestrator:
+  agent_list:
+    - agent_name: PlanFlowSuperAgent
+
+memory_config:
+  memory_modules:
+    - memory_name: chat_history
+      memory_class: ChatMemoryModule
+      config:
+        n_rounds: 100
+        max_context: 16384
+
+super_agents:
+  - agent_class: FlowSuperAgent
+    agent_name: "PlanFlowSuperAgent"
+    agent_description: "Coordinates web searches for Telstra and competitor mobile plans, then produces a comparison report."
+    config:
+      goal: "Compare Telstra mobile plans against competitors by searching the web and producing a pricing comparison report."
+      agent_list:
+        - agent_name: "Web Searcher Telstra"
+          next_step:
+            - "Web Searcher Competitors"
+
+        - agent_name: "Web Searcher Competitors"
+          next_step:
+            - "Pricing Analyst"
+
+        - agent_name: "Pricing Analyst"
+
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: "Web Searcher Telstra"
+    agent_description: >
+      Search the web for current Telstra mobile phone plans and pricing.
+      You MUST return results even if they are not perfectly matching.
+      Search using queries like "Telstra mobile plans 2026 pricing" and
+      "Telstra prepaid postpaid SIM only plans".
+      Extract: plan name, monthly price (AUD), data allowance (GB),
+      talk/SMS inclusions, contract type, and source URL.
+      Format the output as a JSON array of objects.
+    config:
+      output_style: markdown
+      num_queries: 3
+      contexts:
+        - "chat_history"
+
+  - agent_class: SearchAgent
+    agent_name: "Web Searcher Competitors"
+    agent_description: >
+      Search the web for current mobile plan pricing from Australian carriers
+      that compete with Telstra: Optus, Vodafone, Boost Mobile, Amaysim, TPG Mobile.
+      You MUST return results even if they are not perfectly matching.
+      Search using queries like "Optus Vodafone mobile plans 2026 pricing Australia"
+      and "best Australian mobile plans comparison".
+      Extract: carrier, plan name, monthly price (AUD), data allowance (GB),
+      talk/SMS inclusions, contract type, and source URL.
+      Format the output as a JSON array of objects.
+    config:
+      output_style: markdown
+      num_queries: 3
+      contexts:
+        - "chat_history"
+
+  - agent_class: CriticalThinker
+    agent_name: "Pricing Analyst"
+    agent_description: >
+      Analyzes and compares Telstra mobile plan pricing data against competitor
+      offerings. Produces a clear markdown comparison report with tables and
+      recommendations.
+    config:
+      thinking_guidelines:
+        - "Create a side-by-side markdown table comparing all plans by price, data, and features."
+        - "Identify best-value plans in each price tier."
+        - "Clearly state where Telstra is competitive and where competitors offer better value."
+        - "If any search agent returned no data, note it but still analyze what is available."
+      output_style: markdown
+      contexts:
+        - "chat_history"

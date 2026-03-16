@@ -1,0 +1,69 @@
+# ==============================================================================
+# Step 3: Add Report Formatting
+# ==============================================================================
+# Building on Step 2, we add an AuthorAgent that produces structured,
+# professional reports. The AuthorAgent uses leading_questions to shape
+# the output for different audiences (operators, fleet managers, dealers).
+#
+# Try:  "What is the operating weight of a Cat 336?"                      (Search)
+#       "Compare Cat D6 vs D8 for highway grading in Arizona"             (Analyst)
+#       "Create a fleet recommendation report for a construction company"  (Report)
+# ==============================================================================
+
+orchestrator:
+  agent_list:
+    - agent_name: "Equipment Search"
+    - agent_name: "Equipment Analyst"
+    - agent_name: "Report Formatter"
+  enable_routing: true
+
+utility_agents:
+  - agent_class: SearchAgent
+    agent_name: "Equipment Search"
+    agent_description: |
+      Searches the web for Caterpillar equipment specifications including
+      operating weight, engine horsepower, fuel consumption, bucket capacity,
+      dimensions, and standard features.
+      You MUST return results even if they are not perfectly matching.
+      Search using queries like "Cat [model] specifications site:caterpillar.com".
+    config:
+      num_queries: 3
+      contexts:
+        - "chat_history"
+        - "date"
+
+  - agent_class: CriticalThinker
+    agent_name: "Equipment Analyst"
+    agent_description: |
+      Performs in-depth equipment comparisons, application recommendations,
+      and trade-off analyses. Use when the question requires comparing models,
+      evaluating suitability for specific job conditions, or making
+      recommendations based on multiple factors like cost, productivity,
+      and site constraints.
+    config:
+      thinking_guidelines:
+        - "Compare equipment on key dimensions: operating weight, engine power, fuel efficiency, bucket/blade capacity, and technology features."
+        - "Consider real-world factors: terrain, climate, job duration, operator skill level, and maintenance access."
+        - "Present findings in a structured table when comparing two or more models."
+        - "Always recommend the Cat model best suited to the stated use case with clear justification."
+      contexts:
+        - "chat_history"
+        - "date"
+
+  - agent_class: AuthorAgent
+    agent_name: "Report Formatter"
+    agent_description: |
+      Produces polished, structured equipment recommendation documents.
+      Use when the user requests a formal report, proposal, or summary
+      document for internal teams or customer-facing presentations.
+    config:
+      leading_questions:
+        - question: "Target audience"
+          prompt: "Who is the intended audience — field operators, fleet managers, procurement team, or executives?"
+        - question: "Key emphasis"
+          prompt: "What aspects should the report emphasize — total cost of ownership, productivity, reliability, or technology features?"
+        - question: "Site constraints"
+          prompt: "Are there any site constraints to consider — space limitations, weight restrictions, elevation, climate, or regulatory requirements?"
+      contexts:
+        - "chat_history"
+        - "date"

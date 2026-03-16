@@ -1,0 +1,137 @@
+# ============================================================================
+# Step 3: Add Search and Planning
+# ============================================================================
+# Builds on Step 2 by adding a SearchAgent for web lookups and a
+# PlanningAgent for multi-step maintenance planning. Now we have 4
+# specialized agents with intelligent routing.
+#
+# Try: "What are the specs for the new Cat 336 next-gen?"
+#       "Create a maintenance plan for Turner Construction's fleet"
+#       "Does CVA-Premium cover hydraulic pump replacement?"  (still routes correctly)
+# ============================================================================
+
+orchestrator:
+  agent_list:
+    - agent_name: "Fleet Analytics"
+    - agent_name: "Warranty Policy Advisor"
+    - agent_name: "Cat Equipment Search"
+    - agent_name: "Service Planner"
+  enable_routing: true
+  decompose: true
+  contexts:
+    - date
+    - chat_history
+  system_prompt_suffix: |
+    Route warranty, CVA, and coverage questions to "Warranty Policy Advisor".
+    Route data questions (machines, hours, service dates) to "Fleet Analytics".
+    Route equipment spec questions to "Cat Equipment Search".
+    Route maintenance planning requests to "Service Planner".
+    Do NOT answer questions yourself — always delegate to the appropriate agent.
+    When a query mentions a customer name, ALWAYS start with Fleet Analytics first.
+
+utility_agents:
+  - agent_class: AnalyticsAgent
+    agent_name: "Fleet Analytics"
+    agent_description: |
+      Answers data questions about the dealer's customer fleet using structured
+      CSV data. Can filter, aggregate, sort, and analyze fleet inventory and
+      maintenance schedule information. Use this agent for any question about
+      machines, hours, locations, service dates, or maintenance intervals.
+    config:
+      executor_config:
+        type: PandasExecutor
+        tables:
+          - name: fleet
+            file_path: data/fleet.csv
+            description: |
+              Dealer fleet inventory for all customers.
+              IMPORTANT: The DataFrame variable is named default_fleet (NOT fleet). You MUST use default_fleet in all pandas queries.
+              Columns: customer_id (str), customer_name (str), machine_serial (str),
+              model (str), year_manufactured (int), hours_operated (int),
+              location (str), last_service_date (date str YYYY-MM-DD),
+              next_service_due (date str YYYY-MM-DD), service_interval_hours (int),
+              warranty_expiry (date str YYYY-MM-DD), warranty_type (str),
+              cva_tier (str: None/CVA-Preventive/CVA-Premium/CVA-Gold),
+              status (str: Active/Idle/In-Shop)
+          - name: maintenance_schedule
+            file_path: data/maintenance_schedule.csv
+            description: |
+              Standard maintenance schedule by model and interval.
+              IMPORTANT: The DataFrame variable is named default_maintenance_schedule (NOT maintenance_schedule). You MUST use default_maintenance_schedule in all pandas queries.
+              Columns: model (str), interval_hours (int),
+              service_type (str: PM1-Basic/PM2-Intermediate/PM3-Major/PM4-Overhaul),
+              tasks (str, semicolon-separated), estimated_hours (float),
+              required_parts (str, comma-separated part numbers),
+              estimated_cost (float)
+
+  - agent_class: UtilityAgent
+    agent_name: "Warranty Policy Advisor"
+    agent_description: |
+      Answers questions about Caterpillar warranty coverage, Customer Value
+      Agreements (CVA), service contract tiers, coverage exclusions, and
+      upgrade recommendations. Use this agent for any warranty or CVA policy
+      question.
+    config:
+      contexts:
+        - "chat_history"
+      magic_prompt: |
+        You are a Caterpillar warranty and CVA policy expert. Answer questions
+        and provide proactive recommendations using the official policy below.
+        When given machine data (model, hours, warranty status, CVA tier),
+        recommend specific CVA tier upgrades with justification. Be precise
+        and cite the relevant policy section. Always give a direct answer.
+
+        ===== CATERPILLAR WARRANTY POLICY =====
+
+        WARRANTY TYPES:
+        - Full Machine Warranty: Covers all components for 2 years or 3,000 hours,
+          whichever comes first. Includes parts, labor, and travel.
+        - Powertrain Warranty: Covers engine, transmission, and final drives for
+          3 years or 5,000 hours, whichever comes first. Parts and labor included;
+          travel charges may apply.
+        - Extended Warranty: Adds 1 year or 2,000 hours beyond base warranty.
+          Must be purchased within 90 days of machine delivery.
+
+        CUSTOMER VALUE AGREEMENTS (CVA):
+        - CVA-Preventive: Covers all scheduled preventive maintenance (PM1 through
+          PM4) at Cat-specified intervals. Includes oil, filters, and labor for PMs.
+          Does NOT cover wear parts or repairs.
+        - CVA-Premium: Everything in CVA-Preventive PLUS wear part replacement
+          (cutting edges, GET, undercarriage wear items) and S-O-S fluid analysis
+          with proactive component monitoring.
+        - CVA-Gold: Full coverage — includes everything in CVA-Premium PLUS
+          all component repairs and rebuilds, hydraulic system coverage, and
+          technology upgrades. Equivalent to a full-service lease.
+
+        COVERAGE EXCLUSIONS (all warranty and CVA tiers):
+        - Damage from operator abuse or negligence
+        - Unauthorized modifications or attachments
+        - Use of non-Cat fluids, filters, or parts (voids warranty if damage results)
+        - Normal wear items under standard warranty (unless covered by CVA tier)
+        - Consequential damages (lost revenue, rental costs)
+
+        CVA UPGRADE RULES:
+        - Machines can upgrade CVA tier at any PM service interval
+        - Upgrade pricing is based on current hours and machine condition inspection
+        - Downgrading tiers requires contract renewal period
+        - CVA-Gold requires a Cat dealer inspection before enrollment
+
+        ===== END POLICY =====
+
+  - agent_class: SearchAgent
+    agent_name: "Cat Equipment Search"
+    agent_description: |
+      Searches the web for current Caterpillar equipment specifications,
+      product announcements, technical bulletins, and pricing information.
+      Use this agent when the question requires up-to-date information not
+      available in fleet data or warranty policy.
+
+  - agent_class: PlanningAgent
+    agent_name: "Service Planner"
+    agent_description: |
+      Creates structured maintenance plans, service schedules, and resource
+      allocation recommendations. Use ONLY the actual machine data from
+      chat history — do NOT invent machines or use placeholder data.
+    config:
+      contexts:
+        - "chat_history"

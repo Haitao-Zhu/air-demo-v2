@@ -26,14 +26,14 @@ The demo code is hosted on Azure Blob Storage (requires VPN). Download and extra
 
 ```bash
 cd ~
-curl -o air.zip "https://arss1caterstg01.blob.core.windows.net/demo/air.zip?sp=r&st=2026-03-09T15:36:56Z&se=2026-03-09T23:51:56Z&sv=2024-11-04&sr=b&sig=XQwZOkYIMhDTFU%2BeAtaQdfGv%2BSYN3eNTUh12CNwrhmE%3D"
+curl -o air.zip "https://arss1caterstg01.blob.core.windows.net/demo/air-demo.zip?sp=r&st=2026-03-09T22:26:34Z&se=2026-03-10T06:41:34Z&sv=2024-11-04&sr=b&sig=yiZO6KjBleF6sL%2F4%2Bvlb8qLx1WJRJ%2F3LUi5Ehbp3WxE%3D"
 unzip air.zip
 ```
 
 If `curl` is not available:
 
 ```bash
-wget -O air.zip "https://arss1caterstg01.blob.core.windows.net/demo/air.zip?sp=r&st=2026-03-09T15:36:56Z&se=2026-03-09T23:51:56Z&sv=2024-11-04&sr=b&sig=XQwZOkYIMhDTFU%2BeAtaQdfGv%2BSYN3eNTUh12CNwrhmE%3D"
+wget -O air.zip "https://arss1caterstg01.blob.core.windows.net/demo/air-demo.zip?sp=r&st=2026-03-09T22:26:34Z&se=2026-03-10T06:41:34Z&sv=2024-11-04&sr=b&sig=yiZO6KjBleF6sL%2F4%2Bvlb8qLx1WJRJ%2F3LUi5Ehbp3WxE%3D"
 unzip air.zip
 ```
 

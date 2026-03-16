@@ -1,0 +1,23 @@
+model,interval_hours,service_type,tasks,estimated_hours,required_parts,estimated_cost
+Cat 320 GC,250,PM1-Basic,Engine oil and filter change; check coolant level; inspect air filter; grease all fittings,2.0,"1R-0751, 5I-8670",450
+Cat 320 GC,500,PM2-Intermediate,PM1 tasks plus hydraulic oil sample; replace fuel filters; inspect undercarriage; check track tension,4.0,"1R-0751, 5I-8670, 1R-0762, 326-1644",850
+Cat 320 GC,1000,PM3-Major,PM2 tasks plus replace hydraulic filters; change final drive oil; replace air filter element; inspect swing gear,6.5,"1R-0751, 5I-8670, 1R-0762, 326-1644, 131-8822, 5I-7950",1650
+Cat 320 GC,2000,PM4-Overhaul,PM3 tasks plus replace hydraulic pump seal kit; turbo inspection; valve adjustment; full undercarriage measurement,12.0,"1R-0751, 5I-8670, 1R-0762, 326-1644, 131-8822, 5I-7950, 191-5611",3200
+Cat 330,250,PM1-Basic,Engine oil and filter change; coolant test; visual inspection; grease all pins and bushings,2.5,"1R-0751, 5I-8670",520
+Cat 330,500,PM2-Intermediate,PM1 tasks plus hydraulic oil analysis; fuel system inspection; replace fuel water separator; check swing bearing,4.5,"1R-0751, 5I-8670, 438-5386, 1R-0770",980
+Cat 330,1000,PM3-Major,PM2 tasks plus replace hydraulic return filter; change swing drive oil; replace air filter elements; inspect boom and stick pins,7.0,"1R-0751, 5I-8670, 438-5386, 1R-0770, 179-9806, 131-8822",1850
+Cat 336,250,PM1-Basic,Engine oil and filter change; coolant level check; inspect belts and hoses; grease all fittings,2.5,"1R-0751, 5I-8670",550
+Cat 336,500,PM2-Intermediate,PM1 tasks plus S-O-S oil sample; replace fuel filters; hydraulic oil level check; inspect track and rollers,5.0,"1R-0751, 5I-8670, 1R-0762, 438-5386",1050
+Cat 336,1000,PM3-Major,PM2 tasks plus replace hydraulic filters; change travel motor oil; replace air filter; full electrical inspection,8.0,"1R-0751, 5I-8670, 1R-0762, 438-5386, 131-8822, 179-9806",2100
+Cat D6,250,PM1-Basic,Engine oil and filter change; check coolant; inspect undercarriage; grease pivot points,2.0,"1R-0751, 5I-8670",480
+Cat D6,500,PM2-Intermediate,PM1 tasks plus transmission oil sample; replace fuel filters; inspect blade and ripper; check final drives,4.5,"1R-0751, 5I-8670, 1R-0762, 9M-9740",950
+Cat D6,1000,PM3-Major,PM2 tasks plus replace transmission filter; change final drive oil; replace air filters; inspect steering clutch,7.5,"1R-0751, 5I-8670, 1R-0762, 9M-9740, 131-8822, 3T-0687",1900
+Cat 745,250,PM1-Basic,Engine oil and filter change; check coolant and DEF levels; inspect tires; grease articulation points,2.5,"1R-0751, 5I-8670",500
+Cat 745,500,PM2-Intermediate,PM1 tasks plus transmission oil sample; replace fuel water separator; inspect brakes; check differential oil,5.0,"1R-0751, 5I-8670, 438-5386, 1R-0770",1100
+Cat 745,1000,PM3-Major,PM2 tasks plus replace transmission filter; change differential oil; replace air filters; inspect suspension cylinders,8.5,"1R-0751, 5I-8670, 438-5386, 1R-0770, 131-8822, 2P-4004",2300
+Cat 950M,250,PM1-Basic,Engine oil and filter change; check coolant; inspect tires and rims; grease all points,2.0,"1R-0751, 5I-8670",460
+Cat 950M,500,PM2-Intermediate,PM1 tasks plus transmission oil sample; replace fuel filters; inspect bucket and linkage; check axle oil levels,4.0,"1R-0751, 5I-8670, 1R-0762, 9M-9740",900
+Cat 950M,1000,PM3-Major,PM2 tasks plus replace transmission filter; change axle oil; replace air filter; inspect steering cylinder,7.0,"1R-0751, 5I-8670, 1R-0762, 9M-9740, 131-8822, 2P-4004",1800
+Cat 140M,250,PM1-Basic,Engine oil and filter change; check coolant; inspect blade and circle; grease all fittings,2.0,"1R-0751, 5I-8670",440
+Cat 140M,500,PM2-Intermediate,PM1 tasks plus transmission oil sample; replace fuel filters; inspect tandem drive; check tire condition,4.0,"1R-0751, 5I-8670, 1R-0762, 3T-0687",880
+Cat 140M,1000,PM3-Major,PM2 tasks plus replace transmission filter; change tandem oil; replace air filters; inspect circle drive and moldboard,7.0,"1R-0751, 5I-8670, 1R-0762, 3T-0687, 131-8822, 9M-9740",1750
